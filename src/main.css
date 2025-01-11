@@ -1,0 +1,54 @@
+:root {
+  --bulma-navbar-background-color: #06061b;
+  --bulma-scheme-main: #06061b;
+  --bulma-body-background-color: #06061b;
+  --bulma-navbar-height: 100%;
+  --bulma-body-color: #ffffff;
+}
+
+html {
+  font-family: "Inter", "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  color: #fff;
+  background: #06061b;
+}
+
+header {
+  border-bottom: 1px solid #303037;
+  height: 70px;
+}
+
+.main {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(48, 48, 55, 0.2) 0px,
+    rgb(11, 11, 34) 1px,
+    transparent 0px,
+    transparent 50%
+  );
+  background-size: 8px 8px;
+  height: calc(100vh - 70px);
+}
+
+.button {
+  background-color: #15a0be;
+  color: #ffffff;
+}
+
+table {
+  min-width: 720px;
+  margin: 0 auto;
+}
+
+tbody td,
+tbody td {
+  font-family: Monaco, Consolas, monospace;
+  font-size: 12px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.content table td,
+.content table th {
+  border-bottom-color: transparent;
+}

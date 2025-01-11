@@ -1,0 +1,44 @@
+{
+  "name": "dash-frontend",
+  "version": "0.0.1",
+  "main": "src/index.jsx",
+  "repository": "dash-frontend",
+  "license": "MIT",
+  "scripts": {
+    "build": "NODE_ENV=production webpack-cli build --config webpack.config.js",
+    "start": "webpack-cli serve --config webpack.config.js",
+    "start:server": "node server",
+    "lint": "biome check --write ."
+  },
+  "dependencies": {
+    "@helia/car": "^4.0.1",
+    "@helia/unixfs": "^4.0.1",
+    "@ipld/car": "^5.4.0",
+    "@tanstack/react-query": "^5.63.0",
+    "@vderunov/whitelist-contract": "^2.0.0",
+    "bulma": "^1.0.3",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "helia": "^5.1.1",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "@biomejs/biome": "1.9.4",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
+    "@tanstack/react-query-devtools": "^5.63.0",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "react-dom": "^19.0.0",
+    "react-refresh": "^0.16.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  },
+  "packageManager": "yarn@4.6.0"
+}
