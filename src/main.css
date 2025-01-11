@@ -33,6 +33,7 @@ header {
 .button {
   background-color: #15a0be;
   color: #ffffff;
+  font-size: 16px;
 }
 
 table {
