@@ -7,7 +7,7 @@ const API_ENDPOINT = `http://127.0.0.1:${process.env.IPFS_API_PORT ?? 5001}/api/
 const indexHtml = fs.readFileSync('./index.html', 'utf-8');
 const files = {
   'index.html': indexHtml,
-  'favicon.ico': fs.readFileSync('./favicon.ico'),
+  'favicon.ico': fs.readFileSync('public/favicon.ico'),
   'logo.svg': fs.readFileSync('./logo.svg'),
   // 'main.js': fs.readFileSync('./main.js', 'utf-8'),
   // 'main.css': fs.readFileSync('./main.css', 'utf-8'),
@@ -27,7 +27,9 @@ const state = {
 };
 
 function render() {
-  return (files['index.html'] = indexHtml.replace('___STATE___', JSON.stringify(state, null, 2)));
+  const updatedIndexHtml = indexHtml.replace('___STATE___', JSON.stringify(state, null, 2));
+  files['index.html'] = updatedIndexHtml;
+  return updatedIndexHtml;
 }
 
 const server = http.createServer((req, res) => {
@@ -172,10 +174,9 @@ async function updatePeers() {
             .map(({ id, version }) => ({ id, version }))
             .sort((a, b) => a.id.localeCompare(b.id))
         );
-      } catch (e) {
+      } catch (_e) {
         return resolve([]);
       }
-      return resolve([]);
     })
   );
   Object.assign(state, { peers });

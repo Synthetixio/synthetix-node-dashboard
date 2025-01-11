@@ -3,12 +3,13 @@ import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {ethers} from 'ethers';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
+import {BrowserRouter} from 'react-router';
+
+import 'bulma/css/bulma.min.css';
 import {App} from './App';
 import {HeliaProvider} from './HeliaProvider';
 import {SynthetixProvider, useSynthetix} from './useSynthetix';
 import {restoreToken} from './utils';
-
-import 'bulma/css/bulma.min.css';
 import './main.css';
 
 const queryClient = new QueryClient();
@@ -107,7 +108,9 @@ async function run() {
         <WalletWatcher>
           <QueryClientProvider client={queryClient}>
             <HeliaProvider>
-              <App />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </HeliaProvider>
             {process.env.NODE_ENV === 'test' ? null : <ReactQueryDevtools client={queryClient} />}
           </QueryClientProvider>

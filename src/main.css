@@ -18,7 +18,17 @@ header {
   height: 70px;
 }
 
-.main {
+.navbar-item,
+.navbar-link {
+  color: #ffffff;
+}
+
+a.navbar-item:focus-within,
+a.navbar-item:hover {
+  background-color: #15a0be;
+}
+
+.background {
   background-image: repeating-linear-gradient(
     135deg,
     rgba(48, 48, 55, 0.2) 0px,
@@ -34,18 +44,17 @@ header {
   background-color: #15a0be;
   color: #ffffff;
   font-size: 16px;
+  padding: 4px 10px;
 }
 
 table {
   min-width: 720px;
-  margin: 0 auto;
 }
 
 tbody td,
 tbody td {
   font-family: Monaco, Consolas, monospace;
   font-size: 12px;
-  padding: 5px 10px;
   white-space: nowrap;
 }
 

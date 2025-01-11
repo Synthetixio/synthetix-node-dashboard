@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useSynthetix} from './useSynthetix';
 
-const NetworkMismatchBanner = () => {
+export function NetworkMismatchBanner() {
   const [synthetix] = useSynthetix();
   const [show, setShow] = useState(false);
 
@@ -31,6 +31,4 @@ const NetworkMismatchBanner = () => {
       </div>
     </section>
   );
-};
-
-export default NetworkMismatchBanner;
+}
