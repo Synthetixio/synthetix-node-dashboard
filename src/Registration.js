@@ -1,4 +1,4 @@
-import usePermissions from './usePermissions';
+import {usePermissions} from './usePermissions';
 import {useSubmitApplicationMutation} from './useSubmitApplicationMutation';
 import {useWithdrawApplicationMutation} from './useWithdrawApplicationMutation';
 

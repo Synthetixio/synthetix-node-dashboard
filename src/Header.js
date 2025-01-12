@@ -1,7 +1,7 @@
 import {useMutation} from '@tanstack/react-query';
 import {Link} from 'react-router';
 import Logo from '../logo.svg';
-import usePermissions from './usePermissions';
+import {usePermissions} from './usePermissions';
 import {useSynthetix} from './useSynthetix';
 import {getApiUrl, saveToken} from './utils';
 
@@ -28,7 +28,8 @@ export function Header() {
   const [synthetix, updateSynthetix] = useSynthetix();
   const { walletAddress, token, logout, connect, signer } = synthetix;
   const permissions = usePermissions();
-  console.log('permissions', permissions.data);
+  const isUserAuthenticated = walletAddress && token;
+  const isAdminAuthenticated = isUserAuthenticated && permissions.data?.isAdmin;
 
   const signupMutation = useMutation({
     mutationFn: (data) => makeUnauthenticatedRequest('signup', data),
@@ -66,9 +67,19 @@ export function Header() {
               <Link to="/" className="navbar-item">
                 Home
               </Link>
-              {walletAddress && token ? (
+              {isUserAuthenticated ? (
                 <Link to="/registration" className="navbar-item">
                   Registration
+                </Link>
+              ) : null}
+              {isUserAuthenticated ? (
+                <Link to="/create-api-key" className="navbar-item">
+                  Create Api Key
+                </Link>
+              ) : null}
+              {isAdminAuthenticated ? (
+                <Link to="/admin" className="navbar-item">
+                  Admin
                 </Link>
               ) : null}
             </div>
