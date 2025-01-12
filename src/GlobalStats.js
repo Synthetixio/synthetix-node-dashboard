@@ -1,11 +1,11 @@
 import {useQuery} from '@tanstack/react-query';
-import {humanReadableDuration, humanReadableNumber, humanReadableSize} from './utils';
+import {getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize} from './utils';
 
 const useFetchApi = () => {
   return useQuery({
     queryKey: ['apiData'],
     queryFn: async () => {
-      const response = await fetch('http://127.0.0.1:3002/api');
+      const response = await fetch(`${getApiUrl()}api`);
       if (!response.ok) {
         throw new Error(`Request error: ${response.status}`);
       }
