@@ -66,9 +66,11 @@ export function Header() {
               <Link to="/" className="navbar-item">
                 Home
               </Link>
-              <Link to="/registration" className="navbar-item">
-                Registration
-              </Link>
+              {walletAddress && token ? (
+                <Link to="/registration" className="navbar-item">
+                  Registration
+                </Link>
+              ) : null}
             </div>
           </div>
 
