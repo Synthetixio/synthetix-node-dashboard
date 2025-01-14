@@ -1,7 +1,7 @@
 import React from 'react';
 import {Navigate, Outlet, Route, Routes} from 'react-router';
-import {CreateApiKey} from './CreateApiKey';
 import {GlobalStats} from './GlobalStats';
+import {RefreshApiKey} from './RefreshApiKey';
 import {RootLayout} from './RootLayout';
 import {usePermissions} from './usePermissions';
 import {useSynthetix} from './useSynthetix';
@@ -32,7 +32,7 @@ export function App() {
 
         <Route element={<ProtectedRoute isAllowed={isUserAuthenticated} />}>
           <Route path="registration" element={<Registration />} />
-          <Route path="create-api-key" element={<CreateApiKey />} />
+          <Route path="refresh-api-key" element={<RefreshApiKey />} />
         </Route>
 
         <Route element={<ProtectedRoute isAllowed={isAdminAuthenticated} />}>

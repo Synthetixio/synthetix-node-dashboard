@@ -73,8 +73,8 @@ export function Header() {
                 </Link>
               ) : null}
               {isUserAuthenticated ? (
-                <Link to="/create-api-key" className="navbar-item">
-                  Create Api Key
+                <Link to="/refresh-api-key" className="navbar-item">
+                  Refresh Api Key
                 </Link>
               ) : null}
               {isAdminAuthenticated ? (
@@ -106,7 +106,7 @@ export function Header() {
                   <>
                     <button
                       type="button"
-                      className="button is-small is-light"
+                      className="button is-small"
                       onClick={() => signupMutation.mutate({ walletAddress })}
                     >
                       Log In
