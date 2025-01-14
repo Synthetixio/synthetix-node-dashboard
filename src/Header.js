@@ -1,9 +1,31 @@
 import {useMutation} from '@tanstack/react-query';
-import {Link} from 'react-router';
+import React from 'react';
 import Logo from '../logo.svg';
 import {usePermissions} from './usePermissions';
+import {getPageRoute, usePageRoute} from './useRoutes';
 import {useSynthetix} from './useSynthetix';
 import {getApiUrl, saveToken} from './utils';
+
+function NavLink({ page: pageTo, className, ...rest }) {
+  const [page, setPage] = usePageRoute();
+
+  const onClick = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      setPage(pageTo);
+    },
+    [pageTo, setPage]
+  );
+
+  return (
+    <a
+      href={getPageRoute(pageTo)}
+      onClick={onClick}
+      className={`${className || ''} ${page === pageTo ? 'active' : ''}`}
+      {...rest}
+    />
+  );
+}
 
 const makeUnauthenticatedRequest = async (endpoint, data) => {
   const response = await fetch(`${getApiUrl()}${endpoint}`, {
@@ -52,35 +74,35 @@ export function Header() {
       <nav className="navbar" aria-label="main navigation">
         <div className="container is-max-desktop">
           <div className="navbar-brand">
-            <Link to="/" className="navbar-item">
+            <NavLink page="stats" className="navbar-item">
               <img
                 src={Logo}
                 alt="Synthetix"
                 className="image"
                 style={{ width: '200px', maxWidth: '200px' }}
               />
-            </Link>
+            </NavLink>
           </div>
 
           <div className="navbar-menu">
             <div className="navbar-start">
-              <Link to="/" className="navbar-item">
+              <NavLink page="stats" className="navbar-item">
                 Home
-              </Link>
+              </NavLink>
               {isUserAuthenticated ? (
-                <Link to="/registration" className="navbar-item">
+                <NavLink page="registration" className="navbar-item">
                   Registration
-                </Link>
+                </NavLink>
               ) : null}
               {isUserAuthenticated ? (
-                <Link to="/refresh-api-key" className="navbar-item">
+                <NavLink page="refresh-api-key" className="navbar-item">
                   Refresh Api Key
-                </Link>
+                </NavLink>
               ) : null}
               {isAdminAuthenticated ? (
-                <Link to="/admin" className="navbar-item">
+                <NavLink page="admin" className="navbar-item">
                   Admin
-                </Link>
+                </NavLink>
               ) : null}
             </div>
           </div>
@@ -132,12 +154,24 @@ export function Header() {
 
           <div className="navbar-item has-dropdown">
             <div className="navbar-dropdown">
-              <Link to="/" className="navbar-item">
+              <NavLink page="stats" className="navbar-item">
                 Home
-              </Link>
-              <Link to="/registration" className="navbar-item">
-                Registration
-              </Link>
+              </NavLink>
+              {isUserAuthenticated ? (
+                <NavLink page="registration" className="navbar-item">
+                  Registration
+                </NavLink>
+              ) : null}
+              {isUserAuthenticated ? (
+                <NavLink page="refresh-api-key" className="navbar-item">
+                  Refresh Api Key
+                </NavLink>
+              ) : null}
+              {isAdminAuthenticated ? (
+                <NavLink page="admin" className="navbar-item">
+                  Admin
+                </NavLink>
+              ) : null}
             </div>
           </div>
         </div>

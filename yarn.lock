@@ -3961,7 +3961,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-refresh: "npm:^0.16.0"
-    react-router: "npm:^7.1.1"
+    react-router-dom: "npm:^7.1.1"
     style-loader: "npm:^4.0.0"
     webpack: "npm:^5.97.1"
     webpack-cli: "npm:^6.0.1"
@@ -7101,7 +7101,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:^7.1.1":
+"react-router-dom@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "react-router-dom@npm:7.1.1"
+  dependencies:
+    react-router: "npm:7.1.1"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10/d7b978959f89051cf6705cdc0907d92167e39f2835b20b78508cc69e46ebecdbb0b7b95c4d2f954b60c01cdfc70ffc842ee261c0b7b22507a51990e4cebc41ee
+  languageName: node
+  linkType: hard
+
+"react-router@npm:7.1.1":
   version: 7.1.1
   resolution: "react-router@npm:7.1.1"
   dependencies:

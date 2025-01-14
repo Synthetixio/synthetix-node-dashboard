@@ -1,46 +1,85 @@
 import React from 'react';
-import {Navigate, Outlet, Route, Routes} from 'react-router';
 import {GlobalStats} from './GlobalStats';
-import {RefreshApiKey} from './RefreshApiKey';
 import {RootLayout} from './RootLayout';
+import {safeImport} from './safeImport';
 import {usePermissions} from './usePermissions';
+import {usePageRoute} from './useRoutes';
 import {useSynthetix} from './useSynthetix';
 
 const Registration = React.lazy(() =>
-  import('./Registration.js').then((module) => ({ default: module.Registration }))
+  safeImport(() =>
+    import(/* webpackChunkName: "news-add" */ './Registration').then((m) => ({
+      default: m.Registration,
+    }))
+  )
 );
-const Admin = React.lazy(() => import('./Admin.js').then((module) => ({ default: module.Admin })));
 
-const ProtectedRoute = ({ isAllowed, redirectPath = '/', children }) => {
+const RefreshApiKey = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "news-add" */ './RefreshApiKey').then((m) => ({
+      default: m.RefreshApiKey,
+    }))
+  )
+);
+
+const Admin = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "news-add" */ './Admin').then((m) => ({
+      default: m.Admin,
+    }))
+  )
+);
+
+const ProtectedRoute = ({ isAllowed, goTo, redirectPath = 'stats', children }) => {
   if (!isAllowed) {
-    return <Navigate to={redirectPath} replace />;
+    goTo(redirectPath);
+    return;
   }
-  return children || <Outlet />;
+  return children;
 };
 
-export function App() {
+function Routes() {
   const [synthetix] = useSynthetix();
-  const { walletAddress, token } = synthetix;
   const permissions = usePermissions();
+  const [page, setPage] = usePageRoute();
+  const { walletAddress, token } = synthetix;
   const isUserAuthenticated = walletAddress && token;
   const isAdminAuthenticated = isUserAuthenticated && permissions.data?.isAdmin;
 
-  return (
-    <Routes>
-      <Route element={<RootLayout />}>
-        <Route index element={<GlobalStats />} />
+  function renderRoute() {
+    switch (true) {
+      case page === 'registration':
+        return (
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+            <React.Suspense fallback={null}>
+              <Registration />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case page === 'refresh-api-key':
+        return (
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+            <React.Suspense fallback={null}>
+              <RefreshApiKey />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case page === 'admin':
+        return (
+          <ProtectedRoute isAllowed={isAdminAuthenticated} goTo={setPage}>
+            <React.Suspense fallback={null}>
+              <Admin />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      default:
+        return <GlobalStats />;
+    }
+  }
 
-        <Route element={<ProtectedRoute isAllowed={isUserAuthenticated} />}>
-          <Route path="registration" element={<Registration />} />
-          <Route path="refresh-api-key" element={<RefreshApiKey />} />
-        </Route>
+  return <RootLayout>{renderRoute()}</RootLayout>;
+}
 
-        <Route element={<ProtectedRoute isAllowed={isAdminAuthenticated} />}>
-          <Route path="admin" element={<Admin />} />
-        </Route>
-
-        <Route path="/*" element={<p>404</p>} />
-      </Route>
-    </Routes>
-  );
+export function App() {
+  return <Routes />;
 }
