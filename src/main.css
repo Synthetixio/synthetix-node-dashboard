@@ -62,3 +62,7 @@ tbody td {
 .content table th {
   border-bottom-color: transparent;
 }
+
+.input {
+  background-color: transparent;
+}

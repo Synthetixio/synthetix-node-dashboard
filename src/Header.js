@@ -99,6 +99,11 @@ export function Header() {
                   Refresh Api Key
                 </NavLink>
               ) : null}
+              {isUserAuthenticated ? (
+                <NavLink page="namespace" className="navbar-item">
+                  Namespace
+                </NavLink>
+              ) : null}
               {isAdminAuthenticated ? (
                 <NavLink page="admin" className="navbar-item">
                   Admin
@@ -165,6 +170,11 @@ export function Header() {
               {isUserAuthenticated ? (
                 <NavLink page="refresh-api-key" className="navbar-item">
                   Refresh Api Key
+                </NavLink>
+              ) : null}
+              {isUserAuthenticated ? (
+                <NavLink page="namespace" className="navbar-item">
+                  Namespace
                 </NavLink>
               ) : null}
               {isAdminAuthenticated ? (

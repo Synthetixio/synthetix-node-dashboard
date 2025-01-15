@@ -22,6 +22,14 @@ const RefreshApiKey = React.lazy(() =>
   )
 );
 
+const Namespace = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "news-add" */ './Namespace').then((m) => ({
+      default: m.Namespace,
+    }))
+  )
+);
+
 const Admin = React.lazy(() =>
   safeImport(() =>
     import(/* webpackChunkName: "news-add" */ './Admin').then((m) => ({
@@ -61,6 +69,14 @@ function Routes() {
           <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
             <React.Suspense fallback={null}>
               <RefreshApiKey />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case page === 'namespace':
+        return (
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+            <React.Suspense fallback={null}>
+              <Namespace />
             </React.Suspense>
           </ProtectedRoute>
         );

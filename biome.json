@@ -11,6 +11,7 @@
         "noUndeclaredVariables": "error",
         "noUnusedVariables": "error"
       },
+      "suspicious": { "noArrayIndexKey": "off" },
       "a11y": {
         "noLabelWithoutControl": "off"
       }
