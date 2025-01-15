@@ -2,6 +2,7 @@ import React from 'react';
 import {useMintNamespace} from './useMintNamespace';
 import {useSynthetix} from './useSynthetix';
 import {useTokenBalance} from './useTokenBalance';
+import {useTokenIdToNamespace} from './useTokenIdToNamespace';
 import {useTokenOfOwnerByIndex} from './useTokenOfOwnerByIndex';
 import {validateNamespace} from './validateNamespace';
 
@@ -13,9 +14,8 @@ export function Namespace() {
   const [validationErrors, setValidationErrors] = React.useState([]);
 
   const ownerBalance = useTokenBalance({ walletAddress });
-  console.log('ownerBalance', ownerBalance.data);
   const tokensIds = useTokenOfOwnerByIndex({ ownerBalance: ownerBalance.data });
-  console.log('tokensIds', tokensIds.data);
+  const namespaces = useTokenIdToNamespace({ tokensIds: tokensIds.data });
 
   const handleNamespaceSubmit = async (e) => {
     e.preventDefault();
@@ -77,6 +77,29 @@ export function Namespace() {
             ) : null}
 
             {mintNamespaceMutation.isSuccess ? <p>Namespace submitted successfully!</p> : null}
+          </>
+        )}
+      </div>
+
+      <div className="mt-4">
+        {namespaces.isPending ? (
+          <p>Loading..</p>
+        ) : (
+          <>
+            {namespaces.isError ? (
+              <p className="help is-danger">
+                An error occurred: {namespaces.error?.message || 'Unknown error occurred.'}
+              </p>
+            ) : null}
+
+            {namespaces.isSuccess ? (
+              <>
+                <h4 className="title is-4">Namespaces:</h4>
+                {namespaces.data.map((namespace, index) => (
+                  <p key={index}>{namespace}</p>
+                ))}
+              </>
+            ) : null}
           </>
         )}
       </div>

@@ -11,7 +11,6 @@ export function useMintNamespace() {
   return useMutation({
     mutationKey: [chainId, { walletAddress }, 'useMintNamespace'],
     mutationFn: async (data) => {
-      console.log('data', data);
       if (!(provider && signer && chainId && walletAddress)) {
         throw new Error('Not ready');
       }
@@ -35,7 +34,9 @@ export function useMintNamespace() {
       }
     },
     onSuccess: () => {
-      // queryClient.invalidateQueries({queryKey: [chainId, {walletAddress}, 'hasMinted', {address: walletAddress}]});
+      queryClient.invalidateQueries({
+        queryKey: [chainId, { walletAddress }, 'useTokenBalance', { address: walletAddress }],
+      });
     },
   });
 }
