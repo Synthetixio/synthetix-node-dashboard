@@ -1,6 +1,7 @@
 import {CarWriter} from '@ipld/car/writer';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import React, {useCallback, useEffect, useState} from 'react';
+import {Publish} from './Publish';
 import {useHelia} from './useHelia';
 import {carWriterOutToBlob, downloadCarFile, readFileAsUint8Array} from './utils';
 
@@ -111,6 +112,10 @@ export function Upload() {
   return (
     <>
       <span className={`tag ${statusColor}`}>Helia Status</span>
+      <p className="mt-4">
+        <strong>Upload the folder</strong> with your app build (e.g., <code>dist</code>) with{' '}
+        <strong>index.html</strong> required.
+      </p>
       <div className="file mt-4">
         <label className="file-label">
           <input
@@ -129,7 +134,7 @@ export function Upload() {
 
       {rootCID == null || files.length === 0 ? null : (
         <>
-          <div className="field my-4">
+          <div className="field mt-6">
             <label className="label">Car file CID:</label>
             <input
               className="input is-small"
@@ -180,9 +185,13 @@ export function Upload() {
                 <p className="has-text-danger">{kuboIpfsDagImportMutation.error?.message}</p>
               ) : null}
 
-              {kuboIpfsDagImportMutation.isSuccess ? <p>Success!</p> : null}
+              {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
             </>
           )}
+
+          {uploadResponse?.Root.Cid['/'] ? (
+            <Publish rootCID={uploadResponse.Root.Cid['/']} />
+          ) : null}
 
           {uploadResponse ? (
             <pre className="mt-4 is-size-7">{JSON.stringify(uploadResponse, null, 2)}</pre>

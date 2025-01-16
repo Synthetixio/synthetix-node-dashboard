@@ -67,3 +67,8 @@ tbody td {
 .input {
   background-color: transparent;
 }
+
+pre {
+  background-color: transparent;
+  border: 1px solid;
+}
