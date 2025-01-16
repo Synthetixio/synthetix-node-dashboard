@@ -40,7 +40,8 @@ a.navbar-item:hover {
   height: calc(100vh - 70px);
 }
 
-.button {
+.button,
+.file-cta {
   background-color: #15a0be;
   color: #ffffff;
   font-size: 16px;

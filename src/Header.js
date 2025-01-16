@@ -104,6 +104,11 @@ export function Header() {
                   Namespace
                 </NavLink>
               ) : null}
+              {isUserAuthenticated ? (
+                <NavLink page="upload" className="navbar-item">
+                  Upload
+                </NavLink>
+              ) : null}
               {isAdminAuthenticated ? (
                 <NavLink page="admin" className="navbar-item">
                   Admin
@@ -175,6 +180,11 @@ export function Header() {
               {isUserAuthenticated ? (
                 <NavLink page="namespace" className="navbar-item">
                   Namespace
+                </NavLink>
+              ) : null}
+              {isUserAuthenticated ? (
+                <NavLink page="upload" className="navbar-item">
+                  Upload
                 </NavLink>
               ) : null}
               {isAdminAuthenticated ? (

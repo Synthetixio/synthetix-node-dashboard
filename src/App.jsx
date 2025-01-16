@@ -30,6 +30,14 @@ const Namespace = React.lazy(() =>
   )
 );
 
+const Upload = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "news-add" */ './Upload').then((m) => ({
+      default: m.Upload,
+    }))
+  )
+);
+
 const Admin = React.lazy(() =>
   safeImport(() =>
     import(/* webpackChunkName: "news-add" */ './Admin').then((m) => ({
@@ -77,6 +85,14 @@ function Routes() {
           <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
             <React.Suspense fallback={null}>
               <Namespace />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case page === 'upload':
+        return (
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+            <React.Suspense fallback={null}>
+              <Upload />
             </React.Suspense>
           </ProtectedRoute>
         );
