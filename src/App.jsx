@@ -1,5 +1,6 @@
 import React from 'react';
 import {GlobalStats} from './GlobalStats';
+import {HeliaProvider} from './HeliaProvider';
 import {RootLayout} from './RootLayout';
 import {safeImport} from './safeImport';
 import {usePermissions} from './usePermissions';
@@ -92,7 +93,9 @@ function Routes() {
         return (
           <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
-              <Upload />
+              <HeliaProvider>
+                <Upload />
+              </HeliaProvider>
             </React.Suspense>
           </ProtectedRoute>
         );

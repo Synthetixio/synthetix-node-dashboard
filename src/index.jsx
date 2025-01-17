@@ -6,14 +6,13 @@ import ReactDOM from 'react-dom/client';
 import {BrowserRouter} from 'react-router-dom';
 import 'bulma/css/bulma.min.css';
 import {App} from './App';
-import {HeliaProvider} from './HeliaProvider';
 import {SynthetixProvider, useSynthetix} from './useSynthetix';
 import {restoreToken} from './utils';
 import './main.css';
 
 const queryClient = new QueryClient();
 
-function WalletWatcher({children}) {
+function WalletWatcher({ children }) {
   const [, updateSynthetix] = useSynthetix();
 
   useEffect(() => {
@@ -25,8 +24,8 @@ function WalletWatcher({children}) {
       const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : undefined;
       const signer = provider ? await provider.getSigner() : undefined;
       const walletAddress = accounts[0] ? accounts[0].toLowerCase() : undefined;
-      const token = restoreToken({walletAddress});
-      const chainId = await window.ethereum.request({method: 'eth_chainId'});
+      const token = restoreToken({ walletAddress });
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
 
       updateSynthetix({
         walletAddress,
@@ -37,7 +36,7 @@ function WalletWatcher({children}) {
       });
     }
 
-    const handleChainChanged = (chainId) => updateSynthetix({chainId});
+    const handleChainChanged = (chainId) => updateSynthetix({ chainId });
 
     window.ethereum.on('accountsChanged', onAccountsChanged);
     window.ethereum.on('chainChanged', handleChainChanged);
@@ -72,10 +71,10 @@ async function run() {
       const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : undefined;
       const signer = provider ? await provider.getSigner() : undefined;
       const walletAddress = signer.address.toLowerCase();
-      const token = restoreToken({walletAddress});
-      const chainId = await window.ethereum?.request({method: 'eth_chainId'});
+      const token = restoreToken({ walletAddress });
+      const chainId = await window.ethereum?.request({ method: 'eth_chainId' });
       window.localStorage.setItem('connected', 'true');
-      return {provider, signer, walletAddress, token, chainId};
+      return { provider, signer, walletAddress, token, chainId };
     } catch {
       return {};
     }
@@ -100,18 +99,16 @@ async function run() {
           logout,
           provider,
           signer,
-          token: restoreToken({walletAddress}),
+          token: restoreToken({ walletAddress }),
           chainId,
         }}
       >
         <WalletWatcher>
           <QueryClientProvider client={queryClient}>
-            <HeliaProvider>
-              <BrowserRouter>
-                <App/>
-              </BrowserRouter>
-            </HeliaProvider>
-            {process.env.NODE_ENV === 'test' ? null : <ReactQueryDevtools client={queryClient}/>}
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+            {process.env.NODE_ENV === 'test' ? null : <ReactQueryDevtools client={queryClient} />}
           </QueryClientProvider>
         </WalletWatcher>
       </SynthetixProvider>
