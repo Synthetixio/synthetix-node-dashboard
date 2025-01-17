@@ -1,7 +1,7 @@
-import { car } from '@helia/car';
-import { unixfs } from '@helia/unixfs';
-import { createHelia } from 'helia';
-import { createContext, useCallback, useEffect, useState } from 'react';
+import {car} from '@helia/car';
+import {unixfs} from '@helia/unixfs';
+import {createHelia} from 'helia';
+import {createContext, useCallback, useEffect, useState} from 'react';
 
 export const HeliaContext = createContext({
   helia: null,
@@ -30,7 +30,7 @@ export const HeliaProvider = ({ children }) => {
     } else {
       try {
         console.info('Starting Helia');
-        const helia = await createHelia();
+        const helia = await createHelia({ start: false });
         setHelia(helia);
         setHeliaCar(car(helia));
         setFs(unixfs(helia));
