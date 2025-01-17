@@ -3,7 +3,7 @@ import {GlobalStats} from './GlobalStats';
 import {RootLayout} from './RootLayout';
 import {safeImport} from './safeImport';
 import {usePermissions} from './usePermissions';
-import {usePageRoute} from './useRoutes';
+import {useParams} from './useRoutes';
 import {useSynthetix} from './useSynthetix';
 
 const Registration = React.lazy(() =>
@@ -48,7 +48,7 @@ const Admin = React.lazy(() =>
 
 const ProtectedRoute = ({ isAllowed, goTo, redirectPath = 'stats', children }) => {
   if (!isAllowed) {
-    goTo(redirectPath);
+    goTo({ page: redirectPath });
     return;
   }
   return children;
@@ -57,48 +57,48 @@ const ProtectedRoute = ({ isAllowed, goTo, redirectPath = 'stats', children }) =
 function Routes() {
   const [synthetix] = useSynthetix();
   const permissions = usePermissions();
-  const [page, setPage] = usePageRoute();
+  const [params, setParams] = useParams();
   const { walletAddress, token } = synthetix;
   const isUserAuthenticated = walletAddress && token;
   const isAdminAuthenticated = isUserAuthenticated && permissions.data?.isAdmin;
 
   function renderRoute() {
     switch (true) {
-      case page === 'registration':
+      case params.page === 'registration':
         return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <Registration />
             </React.Suspense>
           </ProtectedRoute>
         );
-      case page === 'refresh-api-key':
+      case params.page === 'refresh-api-key':
         return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <RefreshApiKey />
             </React.Suspense>
           </ProtectedRoute>
         );
-      case page === 'namespace':
+      case params.page === 'namespace':
         return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <Namespace />
             </React.Suspense>
           </ProtectedRoute>
         );
-      case page === 'upload':
+      case params.page === 'upload':
         return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setPage}>
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <Upload />
             </React.Suspense>
           </ProtectedRoute>
         );
-      case page === 'admin':
+      case params.page === 'admin':
         return (
-          <ProtectedRoute isAllowed={isAdminAuthenticated} goTo={setPage}>
+          <ProtectedRoute isAllowed={isAdminAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <Admin />
             </React.Suspense>

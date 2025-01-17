@@ -1,29 +1,64 @@
 import {useMutation} from '@tanstack/react-query';
 import React from 'react';
+import {Link} from 'react-router-dom';
 import Logo from '../logo.svg';
 import {usePermissions} from './usePermissions';
-import {getPageRoute, usePageRoute} from './useRoutes';
+import {makeSearch, useParams} from './useRoutes';
 import {useSynthetix} from './useSynthetix';
 import {getApiUrl, saveToken} from './utils';
 
-function NavLink({ page: pageTo, className, ...rest }) {
-  const [page, setPage] = usePageRoute();
-
-  const onClick = React.useCallback(
-    (e) => {
-      e.preventDefault();
-      setPage(pageTo);
-    },
-    [pageTo, setPage]
-  );
-
+function NavLinksList({ isUserAuthenticated, isAdminAuthenticated, setParams }) {
   return (
-    <a
-      href={getPageRoute(pageTo)}
-      onClick={onClick}
-      className={`${className || ''} ${page === pageTo ? 'active' : ''}`}
-      {...rest}
-    />
+    <>
+      <Link
+        to={`?${makeSearch({ page: 'stats' })}`}
+        className="navbar-item"
+        onClick={() => setParams({ page: 'stats' })}
+      >
+        Home
+      </Link>
+      {isUserAuthenticated ? (
+        <>
+          <Link
+            to={`?${makeSearch({ page: 'registration' })}`}
+            className="navbar-item"
+            onClick={() => setParams({ page: 'registration' })}
+          >
+            Registration
+          </Link>
+          <Link
+            to={`?${makeSearch({ page: 'refresh-api-key' })}`}
+            className="navbar-item"
+            onClick={() => setParams({ page: 'refresh-api-key' })}
+          >
+            Refresh Api Key
+          </Link>
+          <Link
+            to={`?${makeSearch({ page: 'namespace' })}`}
+            className="navbar-item"
+            onClick={() => setParams({ page: 'namespace' })}
+          >
+            Namespace
+          </Link>
+          <Link
+            to={`?${makeSearch({ page: 'upload' })}`}
+            className="navbar-item"
+            onClick={() => setParams({ page: 'upload' })}
+          >
+            Upload
+          </Link>
+        </>
+      ) : null}
+      {isAdminAuthenticated ? (
+        <Link
+          to={`?${makeSearch({ page: 'admin' })}`}
+          className="navbar-item"
+          onClick={() => setParams({ page: 'admin' })}
+        >
+          Admin
+        </Link>
+      ) : null}
+    </>
   );
 }
 
@@ -50,6 +85,7 @@ export function Header() {
   const [synthetix, updateSynthetix] = useSynthetix();
   const { walletAddress, token, logout, connect, signer } = synthetix;
   const permissions = usePermissions();
+  const [, setParams] = useParams();
   const isUserAuthenticated = walletAddress && token;
   const isAdminAuthenticated = isUserAuthenticated && permissions.data?.isAdmin;
 
@@ -74,46 +110,27 @@ export function Header() {
       <nav className="navbar" aria-label="main navigation">
         <div className="container is-max-desktop">
           <div className="navbar-brand">
-            <NavLink page="stats" className="navbar-item">
+            <Link
+              to={`?${makeSearch({ page: 'stats' })}`}
+              className="navbar-item"
+              onClick={() => setParams({ page: 'stats' })}
+            >
               <img
                 src={Logo}
                 alt="Synthetix"
                 className="image"
                 style={{ width: '200px', maxWidth: '200px' }}
               />
-            </NavLink>
+            </Link>
           </div>
 
           <div className="navbar-menu">
             <div className="navbar-start">
-              <NavLink page="stats" className="navbar-item">
-                Home
-              </NavLink>
-              {isUserAuthenticated ? (
-                <NavLink page="registration" className="navbar-item">
-                  Registration
-                </NavLink>
-              ) : null}
-              {isUserAuthenticated ? (
-                <NavLink page="refresh-api-key" className="navbar-item">
-                  Refresh Api Key
-                </NavLink>
-              ) : null}
-              {isUserAuthenticated ? (
-                <NavLink page="namespace" className="navbar-item">
-                  Namespace
-                </NavLink>
-              ) : null}
-              {isUserAuthenticated ? (
-                <NavLink page="upload" className="navbar-item">
-                  Upload
-                </NavLink>
-              ) : null}
-              {isAdminAuthenticated ? (
-                <NavLink page="admin" className="navbar-item">
-                  Admin
-                </NavLink>
-              ) : null}
+              <NavLinksList
+                isUserAuthenticated={isUserAuthenticated}
+                isAdminAuthenticated={isAdminAuthenticated}
+                setParams={setParams}
+              />
             </div>
           </div>
 
@@ -164,34 +181,11 @@ export function Header() {
 
           <div className="navbar-item has-dropdown">
             <div className="navbar-dropdown">
-              <NavLink page="stats" className="navbar-item">
-                Home
-              </NavLink>
-              {isUserAuthenticated ? (
-                <NavLink page="registration" className="navbar-item">
-                  Registration
-                </NavLink>
-              ) : null}
-              {isUserAuthenticated ? (
-                <NavLink page="refresh-api-key" className="navbar-item">
-                  Refresh Api Key
-                </NavLink>
-              ) : null}
-              {isUserAuthenticated ? (
-                <NavLink page="namespace" className="navbar-item">
-                  Namespace
-                </NavLink>
-              ) : null}
-              {isUserAuthenticated ? (
-                <NavLink page="upload" className="navbar-item">
-                  Upload
-                </NavLink>
-              ) : null}
-              {isAdminAuthenticated ? (
-                <NavLink page="admin" className="navbar-item">
-                  Admin
-                </NavLink>
-              ) : null}
+              <NavLinksList
+                isUserAuthenticated={isUserAuthenticated}
+                isAdminAuthenticated={isAdminAuthenticated}
+                setParams={setParams}
+              />
             </div>
           </div>
         </div>
