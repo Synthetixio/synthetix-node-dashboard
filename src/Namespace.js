@@ -27,7 +27,11 @@ export function Namespace() {
       return;
     }
     setValidationErrors([]);
-    mintNamespaceMutation.mutate(namespace);
+    mintNamespaceMutation.mutate(namespace, {
+      onSuccess: () => {
+        setNamespace('');
+      },
+    });
   };
 
   return (
@@ -55,10 +59,8 @@ export function Namespace() {
         </div>
         <button
           type="submit"
-          className="button is-small"
-          disabled={
-            !namespace.trim() || validationErrors.length > 0 || mintNamespaceMutation.isPending
-          }
+          className={`button is-small ${mintNamespaceMutation.isPending ? 'is-loading' : ''}`}
+          disabled={!namespace.trim() || validationErrors.length > 0}
         >
           Submit
         </button>
