@@ -4,6 +4,7 @@
   --bulma-body-background-color: #06061b;
   --bulma-navbar-height: 100%;
   --bulma-body-color: #ffffff;
+  --bulma-arrow-color: #15a0be;
 }
 
 html {
@@ -71,4 +72,11 @@ tbody td {
 pre {
   background-color: transparent;
   border: 1px solid;
+}
+
+.select select.is-focused,
+.select select:focus,
+.select select:focus-within {
+  border-color: #15a0be;
+  box-shadow: none;
 }

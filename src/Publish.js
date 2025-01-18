@@ -66,7 +66,7 @@ export function Publish({ rootCID }) {
           {namespaces.isSuccess ? (
             <>
               <h4 className="title is-4">Your Namespaces:</h4>
-              <div className="select">
+              <div className="select is-small">
                 <select
                   value={selectedNamespace}
                   onChange={(e) => setSelectedNamespace(e.target.value)}
