@@ -1,9 +1,9 @@
 export async function importNamespace({ chainId }) {
   switch (`${chainId}`) {
-    case '11155111': {
+    case '11155420': {
       const [{ Namespace: address }, abi] = await Promise.all([
-        import('../namespace/deployments.json').then((m) => m.default),
-        import('../namespace/Namespace.json').then((m) => m.default),
+        import('../namespace/11155420/deployments.json').then((m) => m.default),
+        import('../namespace/11155420/Namespace.json').then((m) => m.default),
       ]);
       return { address, abi };
     }

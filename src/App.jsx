@@ -9,7 +9,7 @@ import {useSynthetix} from './useSynthetix';
 
 const Registration = React.lazy(() =>
   safeImport(() =>
-    import(/* webpackChunkName: "news-add" */ './Registration').then((m) => ({
+    import(/* webpackChunkName: "registration" */ './Registration').then((m) => ({
       default: m.Registration,
     }))
   )
@@ -17,7 +17,7 @@ const Registration = React.lazy(() =>
 
 const RefreshApiKey = React.lazy(() =>
   safeImport(() =>
-    import(/* webpackChunkName: "news-add" */ './RefreshApiKey').then((m) => ({
+    import(/* webpackChunkName: "refresh-api-key" */ './RefreshApiKey').then((m) => ({
       default: m.RefreshApiKey,
     }))
   )
@@ -25,7 +25,7 @@ const RefreshApiKey = React.lazy(() =>
 
 const Namespace = React.lazy(() =>
   safeImport(() =>
-    import(/* webpackChunkName: "news-add" */ './Namespace').then((m) => ({
+    import(/* webpackChunkName: "namespace" */ './Namespace').then((m) => ({
       default: m.Namespace,
     }))
   )
@@ -33,7 +33,7 @@ const Namespace = React.lazy(() =>
 
 const Upload = React.lazy(() =>
   safeImport(() =>
-    import(/* webpackChunkName: "news-add" */ './Upload').then((m) => ({
+    import(/* webpackChunkName: "upload" */ './Upload').then((m) => ({
       default: m.Upload,
     }))
   )
@@ -41,7 +41,7 @@ const Upload = React.lazy(() =>
 
 const Admin = React.lazy(() =>
   safeImport(() =>
-    import(/* webpackChunkName: "news-add" */ './Admin').then((m) => ({
+    import(/* webpackChunkName: "admin" */ './Admin').then((m) => ({
       default: m.Admin,
     }))
   )

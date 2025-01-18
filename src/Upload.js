@@ -29,11 +29,9 @@ export function Upload() {
 
   const kuboIpfsDagImportMutation = useMutation({
     mutationFn: async (data) => {
-      const formData = new FormData();
-      formData.append('file', data);
       const response = await fetch('http://127.0.0.1:5001/api/v0/dag/import', {
         method: 'POST',
-        body: formData,
+        body: data,
       });
       if (!response.ok) {
         throw new Error('DAG upload failed');
@@ -159,7 +157,9 @@ export function Upload() {
               disabled={!carBlob || kuboIpfsDagImportMutation.isPending}
               onClick={() => {
                 if (carBlob) {
-                  kuboIpfsDagImportMutation.mutate(carBlob);
+                  const formData = new FormData();
+                  formData.append('file', carBlob);
+                  kuboIpfsDagImportMutation.mutate(formData);
                 }
               }}
             >

@@ -19,7 +19,7 @@ const abi = [
 
 export async function importMulticall3({ chainId }) {
   switch (`${chainId}`) {
-    case '11155111': {
+    case '11155420': {
       return { address: '0xcA11bde05977b3631167028862bE2a173976CA11', abi: abi };
     }
     case '1': {

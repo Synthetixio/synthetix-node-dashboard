@@ -82,7 +82,7 @@ export function Namespace() {
       </div>
 
       <div className="mt-4">
-        {namespaces.isPending ? (
+        {ownerBalance.isPending || tokensIds.isPending || namespaces.isPending ? (
           <p>Loading..</p>
         ) : (
           <>

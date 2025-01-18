@@ -1,13 +1,25 @@
 import {useMutation} from '@tanstack/react-query';
 import React from 'react';
+import {useSynthetix} from './useSynthetix';
+import {useTokenBalance} from './useTokenBalance';
+import {useTokenIdToNamespace} from './useTokenIdToNamespace';
+import {useTokenOfOwnerByIndex} from './useTokenOfOwnerByIndex';
+import {getApiUrl} from './utils';
 
 export function Publish({ rootCID }) {
+  const [synthetix] = useSynthetix();
+  const { walletAddress, token } = synthetix;
+  const ownerBalance = useTokenBalance({ walletAddress });
+  const tokensIds = useTokenOfOwnerByIndex({ ownerBalance: ownerBalance.data });
+  const namespaces = useTokenIdToNamespace({ tokensIds: tokensIds.data });
+  const [selectedNamespace, setSelectedNamespace] = React.useState('');
   const [publishResponse, setPublishResponse] = React.useState(null);
 
   const namePublish = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`http://127.0.0.1:5001/api/v0/name/publish?arg=${rootCID}`, {
+    mutationFn: async (Name) => {
+      const response = await fetch(`${getApiUrl()}api/v0/name/publish?arg=${rootCID}&key=${Name}`, {
         method: 'POST',
+        headers: { Authorization: `Bearer ${synthetix.token}` },
       });
       if (!response.ok) {
         throw new Error('Failed to publish');
@@ -19,34 +31,112 @@ export function Publish({ rootCID }) {
     },
   });
 
+  const keyGen = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(
+        `${getApiUrl()}api/v0/key/gen?arg=${selectedNamespace}&type=rsa`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.Message || 'Failed to generate a new keypair');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      namePublish.mutate(data.Name);
+    },
+  });
+
   return (
     <div className="my-6">
-      <div className="buttons">
+      {namespaces.isPending ? (
+        <p>Loading..</p>
+      ) : (
+        <>
+          {namespaces.isError ? (
+            <p className="help is-danger">
+              An error occurred: {namespaces.error?.message || 'Unknown error occurred.'}
+            </p>
+          ) : null}
+
+          {namespaces.isSuccess ? (
+            <>
+              <h4 className="title is-4">Your Namespaces:</h4>
+              <div className="select">
+                <select
+                  value={selectedNamespace}
+                  onChange={(e) => setSelectedNamespace(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Select a namespace
+                  </option>
+                  {namespaces.data.map((namespace, index) => (
+                    <option key={index} value={namespace}>
+                      {namespace}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          ) : null}
+        </>
+      )}
+
+      <div className="buttons mt-4">
         <button
           type="button"
-          className={`button is-small ${namePublish.isPending ? 'is-loading' : ''}`}
-          onClick={namePublish.mutate}
+          className={`button is-small ${keyGen.isPending || namePublish.isPending ? 'is-loading' : ''}`}
+          disabled={!selectedNamespace}
+          onClick={keyGen.mutate}
         >
           Publish Build
         </button>
 
         {publishResponse ? (
-          <a
-            className="button is-small"
-            href={`http://127.0.0.1:8080/ipns/${publishResponse.Name}/`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open Published Site
-          </a>
+          <div className="buttons">
+            <a
+              className="button is-small"
+              href={`http://127.0.0.1:8080/ipns/${publishResponse.Name}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              http://127.0.0.1:8080/ipns/{publishResponse.Name}/
+            </a>
+            <a
+              className="button is-small"
+              href={`http://127.0.0.1:8080${publishResponse.Value}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              http://127.0.0.1:8080{publishResponse.Value}/
+            </a>
+          </div>
         ) : null}
       </div>
 
-      {namePublish.isPending ? (
+      {keyGen.isPending ? (
+        <p>Creating a new keypair..</p>
+      ) : (
+        <>
+          {keyGen.isError ? (
+            <p className="has-text-danger">An error occurred: {keyGen.error?.message}</p>
+          ) : null}
+
+          {keyGen.isSuccess ? <p>Keypair created successfully. Proceeding to publish..</p> : null}
+        </>
+      )}
+
+      {keyGen.isSuccess && namePublish.isPending ? (
         <p>Publishing..</p>
       ) : (
         <>
-          {namePublish.isError ? <p>An error occurred: {namePublish.error?.message}</p> : null}
+          {namePublish.isError ? (
+            <p className="has-text-danger">An error occurred: {namePublish.error?.message}</p>
+          ) : null}
 
           {namePublish.isSuccess ? <p>Publishing completed successfully.</p> : null}
         </>
