@@ -97,9 +97,11 @@ export function Namespace() {
             {namespaces.isSuccess ? (
               <>
                 <h4 className="title is-4">Namespaces:</h4>
-                {namespaces.data.map((namespace, index) => (
-                  <p key={index}>{namespace}</p>
-                ))}
+                <ul>
+                  {namespaces.data.map((namespace) => (
+                    <li key={namespace}>{namespace}</li>
+                  ))}
+                </ul>
               </>
             ) : null}
           </>

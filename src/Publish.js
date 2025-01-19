@@ -1,4 +1,4 @@
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
 import {useSynthetix} from './useSynthetix';
 import {useTokenBalance} from './useTokenBalance';
@@ -7,8 +7,9 @@ import {useTokenOfOwnerByIndex} from './useTokenOfOwnerByIndex';
 import {getApiUrl} from './utils';
 
 export function Publish({ rootCID }) {
+  const queryClient = useQueryClient();
   const [synthetix] = useSynthetix();
-  const { walletAddress, token } = synthetix;
+  const { walletAddress, token, chainId } = synthetix;
   const ownerBalance = useTokenBalance({ walletAddress });
   const tokensIds = useTokenOfOwnerByIndex({ ownerBalance: ownerBalance.data });
   const namespaces = useTokenIdToNamespace({ tokensIds: tokensIds.data });
@@ -27,6 +28,9 @@ export function Publish({ rootCID }) {
       return response.json();
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [chainId, 'deployments'],
+      });
       setPublishResponse(data);
     },
   });

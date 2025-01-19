@@ -3,9 +3,12 @@ import {useMutation, useQuery} from '@tanstack/react-query';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Publish} from './Publish';
 import {useHelia} from './useHelia';
-import {carWriterOutToBlob, downloadCarFile, readFileAsUint8Array} from './utils';
+import {useSynthetix} from './useSynthetix';
+import {carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array} from './utils';
 
 export function Upload() {
+  const [synthetix] = useSynthetix();
+  const { chainId, token } = synthetix;
   const { heliaCar, fs, error, starting } = useHelia();
   const [files, setFiles] = useState([]);
   const [carBlob, setCarBlob] = useState(null);
@@ -55,6 +58,20 @@ export function Upload() {
     },
     onSuccess: (data) => {
       setDagData(data);
+    },
+  });
+
+  const deployments = useQuery({
+    queryKey: [chainId, 'deployments'],
+    queryFn: async () => {
+      const response = await fetch(`${getApiUrl()}deployments`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
     },
   });
 
@@ -129,6 +146,23 @@ export function Upload() {
         </label>
       </div>
       {errorMessage && <p className="has-text-danger">{errorMessage}</p>}
+
+      <h4 className="title is-4">Deployments List:</h4>
+      {deployments.isPending ? (
+        <p>Loading...</p>
+      ) : deployments.error ? (
+        <p>Error: {error.message}</p>
+      ) : (
+        <>
+          <ul>
+            {deployments.data.map((deployment) => (
+              <li key={deployment.name}>
+                <strong>{deployment.name}:</strong> {deployment.value}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {rootCID == null || files.length === 0 ? null : (
         <>
