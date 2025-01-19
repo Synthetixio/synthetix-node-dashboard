@@ -48,10 +48,12 @@ const Admin = React.lazy(() =>
 );
 
 const ProtectedRoute = ({ isAllowed, goTo, redirectPath = 'stats', children }) => {
-  if (!isAllowed) {
-    goTo({ page: redirectPath });
-    return;
-  }
+  React.useEffect(() => {
+    if (!isAllowed) {
+      goTo({ page: redirectPath });
+    }
+  }, [isAllowed, goTo, redirectPath]);
+
   return children;
 };
 
