@@ -73,6 +73,7 @@ export function Upload() {
       }
       return response.json();
     },
+    placeholderData: [],
   });
 
   const carBlobFolderQuery = useQuery({
@@ -150,17 +151,23 @@ export function Upload() {
       <h4 className="title is-4">Deployments List:</h4>
       {deployments.isPending ? (
         <p>Loading...</p>
-      ) : deployments.error ? (
-        <p>Error: {error.message}</p>
+      ) : deployments.isError ? (
+        <p className="help is-danger">
+          An error occurred: {deployments.error?.message || 'Unknown error occurred.'}
+        </p>
       ) : (
         <>
-          <ul>
-            {deployments.data.map((deployment) => (
-              <li key={deployment.name}>
-                <strong>{deployment.name}:</strong> {deployment.value}
-              </li>
-            ))}
-          </ul>
+          {deployments.data.length === 0 ? (
+            <p>No deployments found.</p>
+          ) : (
+            <ul>
+              {deployments.data.map((deployment) => (
+                <li key={deployment.name}>
+                  <strong>{deployment.name}:</strong> {deployment.value}
+                </li>
+              ))}
+            </ul>
+          )}
         </>
       )}
 
