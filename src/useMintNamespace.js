@@ -35,7 +35,7 @@ export function useMintNamespace() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, { walletAddress }, 'useTokenBalance', { address: walletAddress }],
+        queryKey: [chainId, 'useUnpublishedNamespaces'],
       });
     },
   });

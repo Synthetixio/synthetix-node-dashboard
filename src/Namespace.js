@@ -1,21 +1,13 @@
 import React from 'react';
 import { useMintNamespace } from './useMintNamespace';
-import { useSynthetix } from './useSynthetix';
-import { useTokenBalance } from './useTokenBalance';
-import { useTokenIdToNamespace } from './useTokenIdToNamespace';
-import { useTokenOfOwnerByIndex } from './useTokenOfOwnerByIndex';
+import { useUnpublishedNamespaces } from './useUnpublishedNamespaces';
 import { validateNamespace } from './validateNamespace';
 
 export function Namespace() {
-  const [synthetix] = useSynthetix();
-  const { walletAddress } = synthetix;
   const mintNamespaceMutation = useMintNamespace();
   const [namespace, setNamespace] = React.useState('');
   const [validationErrors, setValidationErrors] = React.useState([]);
-
-  const ownerBalance = useTokenBalance({ walletAddress });
-  const tokensIds = useTokenOfOwnerByIndex({ ownerBalance: ownerBalance.data });
-  const namespaces = useTokenIdToNamespace({ tokensIds: tokensIds.data });
+  const unpublishedNamespaces = useUnpublishedNamespaces();
 
   const handleNamespaceSubmit = async (e) => {
     e.preventDefault();
@@ -84,21 +76,22 @@ export function Namespace() {
       </div>
 
       <div className="mt-4">
-        {ownerBalance.isPending || tokensIds.isPending || namespaces.isPending ? (
+        {unpublishedNamespaces.isPending ? (
           <p>Loading..</p>
         ) : (
           <>
-            {namespaces.isError ? (
+            {unpublishedNamespaces.isError ? (
               <p className="help is-danger">
-                An error occurred: {namespaces.error?.message || 'Unknown error occurred.'}
+                An error occurred:{' '}
+                {unpublishedNamespaces.error?.message || 'Unknown error occurred.'}
               </p>
             ) : null}
 
-            {namespaces.isSuccess ? (
+            {unpublishedNamespaces.isSuccess ? (
               <>
                 <h4 className="title is-4">Namespaces:</h4>
                 <ul>
-                  {namespaces.data.map((namespace) => (
+                  {unpublishedNamespaces.data.namespaces.map((namespace) => (
                     <li key={namespace}>{namespace}</li>
                   ))}
                 </ul>

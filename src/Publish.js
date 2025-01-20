@@ -1,20 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { useSynthetix } from './useSynthetix';
-import { useTokenBalance } from './useTokenBalance';
-import { useTokenIdToNamespace } from './useTokenIdToNamespace';
-import { useTokenOfOwnerByIndex } from './useTokenOfOwnerByIndex';
+import { useUnpublishedNamespaces } from './useUnpublishedNamespaces';
 import { getApiUrl } from './utils';
 
 export function Publish({ rootCID }) {
   const queryClient = useQueryClient();
   const [synthetix] = useSynthetix();
-  const { walletAddress, token, chainId } = synthetix;
-  const ownerBalance = useTokenBalance({ walletAddress });
-  const tokensIds = useTokenOfOwnerByIndex({ ownerBalance: ownerBalance.data });
-  const namespaces = useTokenIdToNamespace({ tokensIds: tokensIds.data });
+  const { token, chainId } = synthetix;
   const [selectedNamespace, setSelectedNamespace] = React.useState('');
   const [publishResponse, setPublishResponse] = React.useState(null);
+  const unpublishedNamespaces = useUnpublishedNamespaces();
 
   const namePublish = useMutation({
     mutationFn: async (Name) => {
@@ -57,17 +53,17 @@ export function Publish({ rootCID }) {
 
   return (
     <div className="my-6">
-      {namespaces.isPending ? (
+      {unpublishedNamespaces.isPending ? (
         <p>Loading..</p>
       ) : (
         <>
-          {namespaces.isError ? (
+          {unpublishedNamespaces.isError ? (
             <p className="help is-danger">
-              An error occurred: {namespaces.error?.message || 'Unknown error occurred.'}
+              An error occurred: {unpublishedNamespaces.error?.message || 'Unknown error occurred.'}
             </p>
           ) : null}
 
-          {namespaces.isSuccess ? (
+          {unpublishedNamespaces.isSuccess ? (
             <>
               <h4 className="title is-4">Your Namespaces:</h4>
               <div className="select is-small">
@@ -78,8 +74,8 @@ export function Publish({ rootCID }) {
                   <option value="" disabled>
                     Select a namespace
                   </option>
-                  {namespaces.data.map((namespace, index) => (
-                    <option key={index} value={namespace}>
+                  {unpublishedNamespaces.data.namespaces.map((namespace) => (
+                    <option key={namespace} value={namespace}>
                       {namespace}
                     </option>
                   ))}
