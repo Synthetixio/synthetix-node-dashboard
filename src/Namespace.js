@@ -1,10 +1,10 @@
 import React from 'react';
-import {useMintNamespace} from './useMintNamespace';
-import {useSynthetix} from './useSynthetix';
-import {useTokenBalance} from './useTokenBalance';
-import {useTokenIdToNamespace} from './useTokenIdToNamespace';
-import {useTokenOfOwnerByIndex} from './useTokenOfOwnerByIndex';
-import {validateNamespace} from './validateNamespace';
+import { useMintNamespace } from './useMintNamespace';
+import { useSynthetix } from './useSynthetix';
+import { useTokenBalance } from './useTokenBalance';
+import { useTokenIdToNamespace } from './useTokenIdToNamespace';
+import { useTokenOfOwnerByIndex } from './useTokenOfOwnerByIndex';
+import { validateNamespace } from './validateNamespace';
 
 export function Namespace() {
   const [synthetix] = useSynthetix();

@@ -1,7 +1,7 @@
-import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {Contract} from 'ethers';
-import {importNamespace} from './importNamespace';
-import {useSynthetix} from './useSynthetix';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Contract } from 'ethers';
+import { importNamespace } from './importNamespace';
+import { useSynthetix } from './useSynthetix';
 
 export function useMintNamespace() {
   const [synthetix] = useSynthetix();

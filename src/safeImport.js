@@ -1,4 +1,4 @@
-export async function safeImport(importer, {RETRY_DELAY = 2000, RETRY_LIMIT = 10} = {}) {
+export async function safeImport(importer, { RETRY_DELAY = 2000, RETRY_LIMIT = 10 } = {}) {
   if (window?.localStorage?.UNSAFE_IMPORT === 'true') {
     return importer();
   }
@@ -8,7 +8,7 @@ export async function safeImport(importer, {RETRY_DELAY = 2000, RETRY_LIMIT = 10
       return await importer();
     } catch (error) {
       console.error(error);
-      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
     }
   }
 

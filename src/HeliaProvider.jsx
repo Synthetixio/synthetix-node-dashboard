@@ -1,7 +1,7 @@
-import {car} from '@helia/car';
-import {unixfs} from '@helia/unixfs';
-import {createHelia} from 'helia';
-import {createContext, useCallback, useEffect, useState} from 'react';
+import { car } from '@helia/car';
+import { unixfs } from '@helia/unixfs';
+import { createHelia } from 'helia';
+import { createContext, useCallback, useEffect, useState } from 'react';
 
 export const HeliaContext = createContext({
   helia: null,

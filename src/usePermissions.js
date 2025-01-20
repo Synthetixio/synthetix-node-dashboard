@@ -1,7 +1,7 @@
-import {useQuery} from '@tanstack/react-query';
-import {abi, address} from '@vderunov/whitelist-contract/deployments/11155420/Whitelist';
-import {Contract} from 'ethers';
-import {useSynthetix} from './useSynthetix';
+import { useQuery } from '@tanstack/react-query';
+import { abi, address } from '@vderunov/whitelist-contract/deployments/11155420/Whitelist';
+import { Contract } from 'ethers';
+import { useSynthetix } from './useSynthetix';
 
 export function usePermissions() {
   const [synthetix] = useSynthetix();

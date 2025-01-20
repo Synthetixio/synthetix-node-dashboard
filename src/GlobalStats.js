@@ -1,5 +1,5 @@
-import {useQuery} from '@tanstack/react-query';
-import {getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize} from './utils';
+import { useQuery } from '@tanstack/react-query';
+import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
 const useFetchApi = () => {
   return useQuery({

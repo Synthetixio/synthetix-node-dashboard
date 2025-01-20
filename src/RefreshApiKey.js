@@ -1,6 +1,6 @@
-import {useMutation} from '@tanstack/react-query';
-import {useSynthetix} from './useSynthetix';
-import {getApiUrl, saveToken} from './utils';
+import { useMutation } from '@tanstack/react-query';
+import { useSynthetix } from './useSynthetix';
+import { getApiUrl, saveToken } from './utils';
 
 export function RefreshApiKey() {
   const [synthetix, updateSynthetix] = useSynthetix();

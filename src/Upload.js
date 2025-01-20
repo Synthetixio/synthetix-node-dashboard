@@ -1,10 +1,10 @@
-import {CarWriter} from '@ipld/car/writer';
-import {useMutation, useQuery} from '@tanstack/react-query';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Publish} from './Publish';
-import {useHelia} from './useHelia';
-import {useSynthetix} from './useSynthetix';
-import {carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array} from './utils';
+import { CarWriter } from '@ipld/car/writer';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Publish } from './Publish';
+import { useHelia } from './useHelia';
+import { useSynthetix } from './useSynthetix';
+import { carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array } from './utils';
 
 export function Upload() {
   const [synthetix] = useSynthetix();

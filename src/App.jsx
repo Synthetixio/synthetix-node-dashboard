@@ -1,11 +1,11 @@
 import React from 'react';
-import {GlobalStats} from './GlobalStats';
-import {HeliaProvider} from './HeliaProvider';
-import {RootLayout} from './RootLayout';
-import {safeImport} from './safeImport';
-import {usePermissions} from './usePermissions';
-import {useParams} from './useRoutes';
-import {useSynthetix} from './useSynthetix';
+import { GlobalStats } from './GlobalStats';
+import { HeliaProvider } from './HeliaProvider';
+import { RootLayout } from './RootLayout';
+import { safeImport } from './safeImport';
+import { usePermissions } from './usePermissions';
+import { useParams } from './useRoutes';
+import { useSynthetix } from './useSynthetix';
 
 const Registration = React.lazy(() =>
   safeImport(() =>

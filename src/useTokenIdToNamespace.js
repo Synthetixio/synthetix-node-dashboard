@@ -1,8 +1,8 @@
-import {useQuery} from '@tanstack/react-query';
-import {Contract, ethers} from 'ethers';
-import {importMulticall3} from './importMulticall3';
-import {importNamespace} from './importNamespace';
-import {useSynthetix} from './useSynthetix';
+import { useQuery } from '@tanstack/react-query';
+import { Contract, ethers } from 'ethers';
+import { importMulticall3 } from './importMulticall3';
+import { importNamespace } from './importNamespace';
+import { useSynthetix } from './useSynthetix';
 
 const BATCH_SIZE = 500;
 

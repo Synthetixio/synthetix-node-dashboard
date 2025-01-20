@@ -1,12 +1,12 @@
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import {ethers} from 'ethers';
-import {useState} from 'react';
-import {useApproveApplicationMutation} from './useApproveApplicationMutation';
-import {usePermissions} from './usePermissions';
-import {useRejectApplicationMutation} from './useRejectApplicationMutation';
-import {useSynthetix} from './useSynthetix';
-import {getApiUrl} from './utils';
-import {WalletsList} from './WalletsList';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ethers } from 'ethers';
+import { useState } from 'react';
+import { WalletsList } from './WalletsList';
+import { useApproveApplicationMutation } from './useApproveApplicationMutation';
+import { usePermissions } from './usePermissions';
+import { useRejectApplicationMutation } from './useRejectApplicationMutation';
+import { useSynthetix } from './useSynthetix';
+import { getApiUrl } from './utils';
 
 export function Admin() {
   const [synthetix] = useSynthetix();

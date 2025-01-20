@@ -1,7 +1,7 @@
-import {useQuery} from '@tanstack/react-query';
-import {Contract} from 'ethers';
-import {importNamespace} from './importNamespace';
-import {useSynthetix} from './useSynthetix';
+import { useQuery } from '@tanstack/react-query';
+import { Contract } from 'ethers';
+import { importNamespace } from './importNamespace';
+import { useSynthetix } from './useSynthetix';
 
 export function useTokenBalance({ walletAddress: address }) {
   const [synthetix] = useSynthetix();

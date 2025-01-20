@@ -1,10 +1,10 @@
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
-import {useSynthetix} from './useSynthetix';
-import {useTokenBalance} from './useTokenBalance';
-import {useTokenIdToNamespace} from './useTokenIdToNamespace';
-import {useTokenOfOwnerByIndex} from './useTokenOfOwnerByIndex';
-import {getApiUrl} from './utils';
+import { useSynthetix } from './useSynthetix';
+import { useTokenBalance } from './useTokenBalance';
+import { useTokenIdToNamespace } from './useTokenIdToNamespace';
+import { useTokenOfOwnerByIndex } from './useTokenOfOwnerByIndex';
+import { getApiUrl } from './utils';
 
 export function Publish({ rootCID }) {
   const queryClient = useQueryClient();

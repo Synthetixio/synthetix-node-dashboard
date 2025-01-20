@@ -1,5 +1,5 @@
-import {Header} from './Header';
-import {NetworkMismatchBanner} from './NetworkMismatchBanner';
+import { Header } from './Header';
+import { NetworkMismatchBanner } from './NetworkMismatchBanner';
 
 export function RootLayout({ children }) {
   return (

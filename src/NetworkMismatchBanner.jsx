@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useSynthetix} from './useSynthetix';
+import React, { useEffect, useState } from 'react';
+import { useSynthetix } from './useSynthetix';
 
 export function NetworkMismatchBanner() {
   const [synthetix] = useSynthetix();

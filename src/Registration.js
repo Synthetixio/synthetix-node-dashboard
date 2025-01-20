@@ -1,6 +1,6 @@
-import {usePermissions} from './usePermissions';
-import {useSubmitApplicationMutation} from './useSubmitApplicationMutation';
-import {useWithdrawApplicationMutation} from './useWithdrawApplicationMutation';
+import { usePermissions } from './usePermissions';
+import { useSubmitApplicationMutation } from './useSubmitApplicationMutation';
+import { useWithdrawApplicationMutation } from './useWithdrawApplicationMutation';
 
 export function Registration() {
   const permissions = usePermissions();

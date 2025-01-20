@@ -1,13 +1,13 @@
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
-import {ethers} from 'ethers';
-import React, {useEffect} from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ethers } from 'ethers';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import {BrowserRouter} from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import 'bulma/css/bulma.min.css';
-import {App} from './App';
-import {SynthetixProvider, useSynthetix} from './useSynthetix';
-import {restoreToken} from './utils';
+import { App } from './App';
+import { SynthetixProvider, useSynthetix } from './useSynthetix';
+import { restoreToken } from './utils';
 import './main.css';
 
 const queryClient = new QueryClient();

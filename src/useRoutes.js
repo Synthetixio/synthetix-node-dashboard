@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {createSearchParams, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
+import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 export function searchParamsToObject(searchParams) {
   return Object.fromEntries(Array.from(searchParams));

@@ -1,11 +1,11 @@
-import {useMutation} from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from '../logo.svg';
-import {usePermissions} from './usePermissions';
-import {makeSearch, useParams} from './useRoutes';
-import {useSynthetix} from './useSynthetix';
-import {getApiUrl, saveToken} from './utils';
+import { usePermissions } from './usePermissions';
+import { makeSearch, useParams } from './useRoutes';
+import { useSynthetix } from './useSynthetix';
+import { getApiUrl, saveToken } from './utils';
 
 function NavLinksList({ isUserAuthenticated, isAdminAuthenticated, setParams }) {
   return (
