@@ -12,7 +12,7 @@ export function Namespace() {
   const handleNamespaceSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = validateNamespace(namespace);
+    const errors = validateNamespace(namespace.trim(), namespaces.data?.namespaces);
 
     if (errors.length > 0) {
       setValidationErrors(errors);

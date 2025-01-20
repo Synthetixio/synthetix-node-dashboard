@@ -1,9 +1,7 @@
-export function validateNamespace(namespace) {
-  // TODO: validation requirements are needed
-
+export function validateNamespace(namespace, namespaces) {
   const errors = [];
 
-  if (!namespace || namespace.trim() === '') {
+  if (!namespace) {
     errors.push('Namespace cannot be empty.');
   }
 
@@ -17,6 +15,10 @@ export function validateNamespace(namespace) {
 
   if (/^-|-$/.test(namespace)) {
     errors.push('Namespace cannot start or end with a hyphen (-).');
+  }
+
+  if (namespaces?.includes(namespace)) {
+    errors.push('Namespace already exists in the list.');
   }
 
   return errors;
