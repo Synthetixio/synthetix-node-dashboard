@@ -35,7 +35,7 @@ export function useMintNamespace() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'useUnpublishedNamespaces'],
+        queryKey: [chainId, 'useNamespaces'],
       });
     },
   });

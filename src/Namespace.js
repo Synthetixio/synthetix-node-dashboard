@@ -1,13 +1,13 @@
 import React from 'react';
 import { useMintNamespace } from './useMintNamespace';
-import { useUnpublishedNamespaces } from './useUnpublishedNamespaces';
+import { useNamespaces } from './useNamespaces';
 import { validateNamespace } from './validateNamespace';
 
 export function Namespace() {
   const mintNamespaceMutation = useMintNamespace();
   const [namespace, setNamespace] = React.useState('');
   const [validationErrors, setValidationErrors] = React.useState([]);
-  const unpublishedNamespaces = useUnpublishedNamespaces();
+  const namespaces = useNamespaces();
 
   const handleNamespaceSubmit = async (e) => {
     e.preventDefault();
@@ -76,22 +76,21 @@ export function Namespace() {
       </div>
 
       <div className="mt-4">
-        {unpublishedNamespaces.isPending ? (
+        {namespaces.isPending ? (
           <p>Loading..</p>
         ) : (
           <>
-            {unpublishedNamespaces.isError ? (
+            {namespaces.isError ? (
               <p className="help is-danger">
-                An error occurred:{' '}
-                {unpublishedNamespaces.error?.message || 'Unknown error occurred.'}
+                An error occurred: {namespaces.error?.message || 'Unknown error occurred.'}
               </p>
             ) : null}
 
-            {unpublishedNamespaces.isSuccess ? (
+            {namespaces.isSuccess ? (
               <>
                 <h4 className="title is-4">Namespaces:</h4>
                 <ul>
-                  {unpublishedNamespaces.data.namespaces.map((namespace) => (
+                  {namespaces.data.namespaces.map((namespace) => (
                     <li key={namespace}>{namespace}</li>
                   ))}
                 </ul>
