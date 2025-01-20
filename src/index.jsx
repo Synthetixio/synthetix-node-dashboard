@@ -21,19 +21,23 @@ function WalletWatcher({ children }) {
     }
 
     async function onAccountsChanged(accounts) {
-      const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : undefined;
-      const signer = provider ? await provider.getSigner() : undefined;
-      const walletAddress = accounts[0] ? accounts[0].toLowerCase() : undefined;
-      const token = restoreToken({ walletAddress });
-      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      try {
+        const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : undefined;
+        const signer = provider ? await provider.getSigner() : undefined;
+        const walletAddress = accounts[0] ? accounts[0].toLowerCase() : undefined;
+        const token = restoreToken({ walletAddress });
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
 
-      updateSynthetix({
-        walletAddress,
-        token,
-        provider,
-        signer,
-        chainId,
-      });
+        updateSynthetix({
+          walletAddress,
+          token,
+          provider,
+          signer,
+          chainId,
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     const handleChainChanged = (chainId) => updateSynthetix({ chainId });
@@ -85,9 +89,12 @@ async function run() {
     window.location.reload();
   };
 
-  const chainId = await window.ethereum?.request({
-    method: 'eth_chainId',
-  });
+  let chainId;
+  try {
+    chainId = await window.ethereum?.request({ method: 'eth_chainId' });
+  } catch (err) {
+    console.error(err);
+  }
 
   const root = ReactDOM.createRoot(document.querySelector('#app'));
   root.render(
