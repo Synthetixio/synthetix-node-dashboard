@@ -25,7 +25,7 @@ export function Publish({ rootCID }) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'deployments'],
+        queryKey: [chainId, 'useDeployments'],
       });
       setPublishResponse(data);
     },

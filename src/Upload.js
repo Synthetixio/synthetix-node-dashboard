@@ -1,12 +1,14 @@
 import { CarWriter } from '@ipld/car/writer';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Publish } from './Publish';
+import { useDeployments } from './useDeployments';
 import { useHelia } from './useHelia';
 import { useSynthetix } from './useSynthetix';
 import { carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array } from './utils';
 
 export function Upload() {
+  const queryClient = useQueryClient();
   const [synthetix] = useSynthetix();
   const { chainId, token } = synthetix;
   const { heliaCar, fs, error, starting } = useHelia();
@@ -16,6 +18,7 @@ export function Upload() {
   const [uploadResponse, setUploadResponse] = useState(null);
   const [dagData, setDagData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedName, setSelectedName] = React.useState('');
 
   const handleFileEvent = useCallback((e) => {
     const filesToUpload = [...e.target.files];
@@ -61,20 +64,7 @@ export function Upload() {
     },
   });
 
-  const deployments = useQuery({
-    queryKey: [chainId, 'deployments'],
-    queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}deployments`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    },
-    placeholderData: [],
-  });
+  const deployments = useDeployments();
 
   const carBlobFolderQuery = useQuery({
     enabled: fs !== null && heliaCar !== null && files.length > 0,
@@ -105,6 +95,33 @@ export function Upload() {
       };
     },
   });
+
+  const keyRemove = useMutation({
+    mutationFn: async (name) => {
+      const response = await fetch(`${getApiUrl()}api/v0/key/rm?arg=${name}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [chainId, 'useDeployments'],
+      });
+    },
+  });
+
+  const handleRemoveSubmit = (e) => {
+    e.preventDefault();
+    keyRemove.mutate(selectedName, {
+      onSuccess: () => {
+        setSelectedName('');
+      },
+    });
+  };
 
   useEffect(() => {
     if (carBlobFolderQuery.data) {
@@ -160,13 +177,48 @@ export function Upload() {
           {deployments.data.length === 0 ? (
             <p>No deployments found.</p>
           ) : (
-            <ul>
-              {deployments.data.map((deployment) => (
-                <li key={deployment.name}>
-                  <strong>{deployment.name}:</strong> {deployment.value}
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul>
+                {deployments.data.map(({ name, value }) => (
+                  <li key={name}>
+                    <strong>{name}:</strong> {value}
+                  </li>
+                ))}
+              </ul>
+
+              <form
+                className="mt-4 p-4"
+                style={{ border: '1px solid' }}
+                onSubmit={handleRemoveSubmit}
+              >
+                <h4 className="title is-4">Remove a keypair.</h4>
+                <div className="control mb-4">
+                  <div className={`select is-small ${keyRemove.isPending ? 'is-loading' : ''}`}>
+                    <select value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
+                      <option value="" disabled>
+                        Select a name
+                      </option>
+                      {deployments.data.map((deployments) => (
+                        <option key={deployments.name} value={deployments.name}>
+                          {deployments.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {keyRemove.isError ? (
+                    <p className="has-text-danger">An error occurred: {keyRemove.error?.message}</p>
+                  ) : null}
+                  {keyRemove.isSuccess ? <p>Remove successfully!</p> : null}
+                </div>
+                <button
+                  type="submit"
+                  className={`button is-small ${keyRemove.isPending ? 'is-loading' : ''}`}
+                  disabled={!selectedName}
+                >
+                  Submit
+                </button>
+              </form>
+            </>
           )}
         </>
       )}
