@@ -44,8 +44,7 @@ export function Publish({ rootCID }) {
         }
       );
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData?.Message || 'Failed to generate a new keypair');
+        throw new Error('Failed to generate a new keypair');
       }
       return response.json();
     },
