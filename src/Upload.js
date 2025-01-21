@@ -111,6 +111,9 @@ export function Upload() {
       queryClient.invalidateQueries({
         queryKey: [chainId, 'useDeployments'],
       });
+      queryClient.invalidateQueries({
+        queryKey: [chainId, 'useUnpublishedNamespaces'],
+      });
     },
   });
 
@@ -208,7 +211,6 @@ export function Upload() {
                   {keyRemove.isError ? (
                     <p className="has-text-danger">An error occurred: {keyRemove.error?.message}</p>
                   ) : null}
-                  {keyRemove.isSuccess ? <p>Remove successfully!</p> : null}
                 </div>
                 <button
                   type="submit"
@@ -217,6 +219,7 @@ export function Upload() {
                 >
                   Submit
                 </button>
+                {keyRemove.isSuccess ? <p className="mt-4">Remove successfully!</p> : null}
               </form>
             </>
           )}

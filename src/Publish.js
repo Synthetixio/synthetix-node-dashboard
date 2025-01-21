@@ -27,6 +27,9 @@ export function Publish({ rootCID }) {
       queryClient.invalidateQueries({
         queryKey: [chainId, 'useDeployments'],
       });
+      queryClient.invalidateQueries({
+        queryKey: [chainId, 'useUnpublishedNamespaces'],
+      });
       setPublishResponse(data);
     },
   });
@@ -65,7 +68,7 @@ export function Publish({ rootCID }) {
 
           {unpublishedNamespaces.isSuccess ? (
             <>
-              <h4 className="title is-4">Your Namespaces:</h4>
+              <h4 className="title is-4">Your Unpublished Namespaces:</h4>
               <div className="select is-small">
                 <select
                   value={selectedNamespace}
