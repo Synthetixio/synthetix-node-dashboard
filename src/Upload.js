@@ -2,6 +2,7 @@ import { CarWriter } from '@ipld/car/writer';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Publish } from './Publish';
+import { Update } from './Update';
 import { useDeployments } from './useDeployments';
 import { useHelia } from './useHelia';
 import { useSynthetix } from './useSynthetix';
@@ -189,17 +190,13 @@ export function Upload() {
                 ))}
               </ul>
 
-              <form
-                className="mt-4 p-4"
-                style={{ border: '1px solid' }}
-                onSubmit={handleRemoveSubmit}
-              >
+              <form className="mt-4 p-4 simple-border" onSubmit={handleRemoveSubmit}>
                 <h4 className="title is-4">Remove a keypair.</h4>
                 <div className="control mb-4">
                   <div className={`select is-small ${keyRemove.isPending ? 'is-loading' : ''}`}>
                     <select value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
                       <option value="" disabled>
-                        Select a name
+                        Select a namespace
                       </option>
                       {deployments.data.map((deployments) => (
                         <option key={deployments.name} value={deployments.name}>
@@ -228,72 +225,79 @@ export function Upload() {
 
       {rootCID == null || files.length === 0 ? null : (
         <>
-          <div className="field mt-6">
-            <label className="label">Car file CID:</label>
-            <input
-              className="input is-small"
-              type="text"
-              placeholder="Example: bafybeideb6ss..."
-              value={rootCID.toString()}
-              readOnly
-            />
-          </div>
-          <div className="buttons">
-            <button
-              type="button"
-              className={`button is-small ${carBlobFolderQuery.isPending ? 'is-loading' : ''}`}
-              disabled={!carBlob}
-              onClick={() => downloadCarFile(carBlob)}
-            >
-              Download Car file
-            </button>
-            <button
-              type="button"
-              className={`button is-small ${kuboIpfsDagImportMutation.isPending ? 'is-loading' : ''}`}
-              disabled={!carBlob || kuboIpfsDagImportMutation.isPending}
-              onClick={() => {
-                if (carBlob) {
-                  const formData = new FormData();
-                  formData.append('file', carBlob);
-                  kuboIpfsDagImportMutation.mutate(formData);
-                }
-              }}
-            >
-              Add directory to IPFS
-            </button>
-            <button
-              type="button"
-              className={`button is-small ${kuboIpfsDagGetMutation.isPending ? 'is-loading' : ''}`}
-              disabled={!uploadResponse || kuboIpfsDagGetMutation.isPending}
-              onClick={() => {
-                kuboIpfsDagGetMutation.mutate(uploadResponse.Root.Cid['/']);
-              }}
-            >
-              Get DAG Object
-            </button>
-          </div>
+          <div className="mt-4 p-4 simple-border">
+            <div className="field">
+              <label className="label">Car file CID:</label>
+              <input
+                className="input is-small"
+                type="text"
+                placeholder="Example: bafybeideb6ss..."
+                value={rootCID.toString()}
+                readOnly
+              />
+            </div>
+            <div className="buttons">
+              <button
+                type="button"
+                className={`button is-small ${carBlobFolderQuery.isPending ? 'is-loading' : ''}`}
+                disabled={!carBlob}
+                onClick={() => downloadCarFile(carBlob)}
+              >
+                Download Car file
+              </button>
+              <button
+                type="button"
+                className={`button is-small ${kuboIpfsDagImportMutation.isPending ? 'is-loading' : ''}`}
+                disabled={!carBlob || kuboIpfsDagImportMutation.isPending}
+                onClick={() => {
+                  if (carBlob) {
+                    const formData = new FormData();
+                    formData.append('file', carBlob);
+                    kuboIpfsDagImportMutation.mutate(formData);
+                  }
+                }}
+              >
+                Add directory to IPFS
+              </button>
+              <button
+                type="button"
+                className={`button is-small ${kuboIpfsDagGetMutation.isPending ? 'is-loading' : ''}`}
+                disabled={!uploadResponse || kuboIpfsDagGetMutation.isPending}
+                onClick={() => {
+                  kuboIpfsDagGetMutation.mutate(uploadResponse.Root.Cid['/']);
+                }}
+              >
+                Get DAG Object
+              </button>
+            </div>
 
-          {kuboIpfsDagImportMutation.isPending ? (
-            'Importing directory to IPFS..'
-          ) : (
-            <>
-              {kuboIpfsDagImportMutation.isError ? (
-                <p className="has-text-danger">{kuboIpfsDagImportMutation.error?.message}</p>
-              ) : null}
+            {kuboIpfsDagImportMutation.isPending ? (
+              'Importing directory to IPFS..'
+            ) : (
+              <>
+                {kuboIpfsDagImportMutation.isError ? (
+                  <p className="has-text-danger">{kuboIpfsDagImportMutation.error?.message}</p>
+                ) : null}
 
-              {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
-            </>
-          )}
+                {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
+              </>
+            )}
+          </div>
 
           {uploadResponse?.Root.Cid['/'] ? (
-            <Publish rootCID={uploadResponse.Root.Cid['/']} />
+            <>
+              <Publish rootCID={uploadResponse.Root.Cid['/']} />
+              <Update rootCID={uploadResponse.Root.Cid['/']} />
+            </>
           ) : null}
 
           {uploadResponse ? (
-            <pre className="mt-4 is-size-7">{JSON.stringify(uploadResponse, null, 2)}</pre>
+            <pre className="mt-4 is-size-7 simple-border">
+              {JSON.stringify(uploadResponse, null, 2)}
+            </pre>
           ) : null}
           {dagData ? (
-            <pre className="mt-4 is-size-7">{JSON.stringify(dagData, null, 2)}</pre>
+            <pre className="mt-4 is-size-7 simple-border">{JSON.stringify(dagData, null, 2)}</pre>
           ) : null}
         </>
       )}

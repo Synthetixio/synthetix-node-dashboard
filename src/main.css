@@ -71,7 +71,10 @@ tbody td {
 
 pre {
   background-color: transparent;
-  border: 1px solid;
+}
+
+.simple-border {
+  border: 1px solid #303037;
 }
 
 .select select.is-focused,

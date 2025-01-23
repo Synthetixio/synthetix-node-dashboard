@@ -1,46 +1,23 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import React from 'react';
+import { useNamePublish } from './useNamePublish';
 import { useSynthetix } from './useSynthetix';
 import { useUnpublishedNamespaces } from './useUnpublishedNamespaces';
 import { getApiUrl } from './utils';
 
 export function Publish({ rootCID }) {
-  const queryClient = useQueryClient();
   const [synthetix] = useSynthetix();
-  const { token, chainId } = synthetix;
   const [selectedNamespace, setSelectedNamespace] = React.useState('');
   const [publishResponse, setPublishResponse] = React.useState(null);
   const unpublishedNamespaces = useUnpublishedNamespaces();
-
-  const namePublish = useMutation({
-    mutationFn: async (Name) => {
-      const response = await fetch(`${getApiUrl()}api/v0/name/publish?arg=${rootCID}&key=${Name}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to publish');
-      }
-      return response.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: [chainId, 'useDeployments'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [chainId, 'useUnpublishedNamespaces'],
-      });
-      setPublishResponse(data);
-    },
-  });
-
+  const namePublish = useNamePublish();
   const keyGen = useMutation({
     mutationFn: async () => {
       const response = await fetch(
         `${getApiUrl()}api/v0/key/gen?arg=${selectedNamespace}&type=rsa`,
         {
           method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${synthetix.token}` },
         }
       );
       if (!response.ok) {
@@ -49,12 +26,21 @@ export function Publish({ rootCID }) {
       return response.json();
     },
     onSuccess: (data) => {
-      namePublish.mutate(data.Name);
+      namePublish.mutate(
+        { Name: data.Name, rootCID },
+        { onSuccess: (publishData) => setPublishResponse(publishData) }
+      );
     },
   });
 
   return (
-    <div className="my-6">
+    <form
+      className="my-4 p-4 simple-border"
+      onSubmit={(e) => {
+        e.preventDefault();
+        keyGen.mutate();
+      }}
+    >
       {unpublishedNamespaces.isPending ? (
         <p>Loading..</p>
       ) : (
@@ -90,10 +76,9 @@ export function Publish({ rootCID }) {
 
       <div className="buttons mt-4">
         <button
-          type="button"
+          type="submit"
           className={`button is-small ${keyGen.isPending || namePublish.isPending ? 'is-loading' : ''}`}
           disabled={!selectedNamespace}
-          onClick={keyGen.mutate}
         >
           Publish Build
         </button>
@@ -145,8 +130,10 @@ export function Publish({ rootCID }) {
       )}
 
       {publishResponse ? (
-        <pre className="mt-4 is-size-7">{JSON.stringify(publishResponse, null, 2)}</pre>
+        <pre className="mt-4 is-size-7 simple-border">
+          {JSON.stringify(publishResponse, null, 2)}
+        </pre>
       ) : null}
-    </div>
+    </form>
   );
 }
