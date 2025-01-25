@@ -5,6 +5,7 @@ import { Publish } from './Publish';
 import { Update } from './Update';
 import { useDeployments } from './useDeployments';
 import { useHelia } from './useHelia';
+import { usePinAdd } from './usePinAdd';
 import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
 
 export function Upload() {
@@ -15,6 +16,7 @@ export function Upload() {
   const [uploadResponse, setUploadResponse] = useState(null);
   const [dagData, setDagData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const pinAdd = usePinAdd();
 
   const handleFileEvent = useCallback((e) => {
     const filesToUpload = [...e.target.files];
@@ -41,6 +43,7 @@ export function Upload() {
       return response.json();
     },
     onSuccess: (data) => {
+      pinAdd.mutate(data.Root.Cid['/']);
       setUploadResponse(data);
     },
   });
@@ -216,6 +219,16 @@ export function Upload() {
                 ) : null}
 
                 {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
+              </>
+            )}
+
+            {pinAdd.isPending ? (
+              'Pinning to IPFS..'
+            ) : (
+              <>
+                {pinAdd.isError ? <p className="has-text-danger">{pinAdd.error?.message}</p> : null}
+
+                {pinAdd.isSuccess ? <p>Successfully pinned to IPFS</p> : null}
               </>
             )}
           </div>

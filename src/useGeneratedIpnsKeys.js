@@ -20,10 +20,5 @@ export function useGeneratedIpnsKeys() {
       return response.json();
     },
     placeholderData: { keys: [] },
-    select: (data) => {
-      return {
-        keys: data.keys.filter((item) => item.value !== null),
-      };
-    },
   });
 }
