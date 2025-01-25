@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl } from './utils';
 
-export function useDeployments() {
+export function useGeneratedIpnsKeys() {
   const [synthetix] = useSynthetix();
   const { chainId, token } = synthetix;
 
   return useQuery({
     enabled: Boolean(chainId),
-    queryKey: [chainId, 'useDeployments'],
+    queryKey: [chainId, 'useGeneratedIpnsKeys'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}deployments`, {
+      const response = await fetch(`${getApiUrl()}generated-ipns-keys`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -19,6 +19,11 @@ export function useDeployments() {
       }
       return response.json();
     },
-    placeholderData: [],
+    placeholderData: { keys: [] },
+    select: (data) => {
+      return {
+        keys: data.keys.filter((item) => item.value !== null),
+      };
+    },
   });
 }

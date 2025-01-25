@@ -31,6 +31,14 @@ const Namespace = React.lazy(() =>
   )
 );
 
+const Keys = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "keys" */ './Keys').then((m) => ({
+      default: m.Keys,
+    }))
+  )
+);
+
 const Upload = React.lazy(() =>
   safeImport(() =>
     import(/* webpackChunkName: "upload" */ './Upload').then((m) => ({
@@ -88,6 +96,14 @@ function Routes() {
           <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <Namespace />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case params.page === 'keys':
+        return (
+          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
+            <React.Suspense fallback={null}>
+              <Keys />
             </React.Suspense>
           </ProtectedRoute>
         );

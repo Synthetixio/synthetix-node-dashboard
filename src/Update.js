@@ -3,74 +3,88 @@ import { useDeployments } from './useDeployments';
 import { useNamePublish } from './useNamePublish';
 
 export function Update({ rootCID }) {
-  const [selectedName, setSelectedName] = React.useState('');
-  const [publishResponse, setPublishResponse] = React.useState(null);
+  const [ipnsKey, setIpnsKey] = React.useState('');
+  const [response, setResponse] = React.useState(null);
   const deployments = useDeployments();
   const namePublish = useNamePublish();
 
   return (
     <form
-      className="mt-4 p-4 simple-border"
+      className="my-4 p-4 simple-border"
       onSubmit={(e) => {
         e.preventDefault();
         namePublish.mutate(
-          { Name: selectedName, rootCID },
-          {
-            onSuccess: (data) => setPublishResponse(data),
-          }
+          { ipnsKey, rootCID },
+          { onSuccess: (publishData) => setResponse(publishData) }
         );
       }}
     >
-      <h4 className="title is-4">Update</h4>
-      <div className="control mb-4">
-        <div className={`select is-small ${namePublish.isPending ? 'is-loading' : ''}`}>
-          <select value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
-            <option value="" disabled>
-              Select a namespace
-            </option>
-            {deployments.data.map((deployments) => (
-              <option key={deployments.name} value={deployments.name}>
-                {deployments.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {namePublish.isError ? (
-          <p className="has-text-danger">An error occurred: {namePublish.error?.message}</p>
-        ) : null}
-      </div>
+      {deployments.isPending ? (
+        <p>Loading..</p>
+      ) : (
+        <>
+          {deployments.isError ? (
+            <p className="help is-danger">
+              An error occurred: {deployments.error?.message || 'Unknown error occurred.'}
+            </p>
+          ) : null}
+
+          {deployments.isSuccess ? (
+            <>
+              <h4 className="title is-4">Update</h4>
+              <div className="select is-small">
+                <select value={ipnsKey} onChange={(e) => setIpnsKey(e.target.value)}>
+                  <option value="" disabled>
+                    Select a namespace
+                  </option>
+                  {deployments.data.map(({ name }) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          ) : null}
+        </>
+      )}
 
       <div className="buttons mt-4">
         <button
           type="submit"
           className={`button is-small ${namePublish.isPending ? 'is-loading' : ''}`}
-          disabled={!selectedName}
+          disabled={!ipnsKey}
         >
-          Update Build
+          Update
         </button>
 
-        {publishResponse ? (
+        {response ? (
           <div className="buttons">
             <a
               className="button is-small"
-              href={`http://127.0.0.1:8080/ipns/${publishResponse.Name}/`}
+              href={`http://127.0.0.1:8080/ipns/${response.Name}/`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              http://127.0.0.1:8080/ipns/{publishResponse.Name}/
+              http://127.0.0.1:8080/ipns/{response.Name}/
             </a>
             <a
               className="button is-small"
-              href={`http://127.0.0.1:8080${publishResponse.Value}/`}
+              href={`http://127.0.0.1:8080${response.Value}/`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              http://127.0.0.1:8080{publishResponse.Value}/
+              http://127.0.0.1:8080{response.Value}/
             </a>
           </div>
         ) : null}
       </div>
-      {namePublish.isSuccess ? <p className="mt-4">Update successfully!</p> : null}
+
+      {namePublish.isSuccess ? <p>Update successfully!</p> : null}
+
+      {response ? (
+        <pre className="mt-4 is-size-7 simple-border">{JSON.stringify(response, null, 2)}</pre>
+      ) : null}
     </form>
   );
 }

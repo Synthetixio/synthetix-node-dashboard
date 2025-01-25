@@ -1,17 +1,13 @@
 import { CarWriter } from '@ipld/car/writer';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Publish } from './Publish';
 import { Update } from './Update';
 import { useDeployments } from './useDeployments';
 import { useHelia } from './useHelia';
-import { useSynthetix } from './useSynthetix';
-import { carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array } from './utils';
+import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
 
 export function Upload() {
-  const queryClient = useQueryClient();
-  const [synthetix] = useSynthetix();
-  const { chainId, token } = synthetix;
   const { heliaCar, fs, error, starting } = useHelia();
   const [files, setFiles] = useState([]);
   const [carBlob, setCarBlob] = useState(null);
@@ -19,7 +15,6 @@ export function Upload() {
   const [uploadResponse, setUploadResponse] = useState(null);
   const [dagData, setDagData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [selectedName, setSelectedName] = React.useState('');
 
   const handleFileEvent = useCallback((e) => {
     const filesToUpload = [...e.target.files];
@@ -97,36 +92,6 @@ export function Upload() {
     },
   });
 
-  const keyRemove = useMutation({
-    mutationFn: async (name) => {
-      const response = await fetch(`${getApiUrl()}api/v0/key/rm?arg=${name}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [chainId, 'useDeployments'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [chainId, 'useUnpublishedNamespaces'],
-      });
-    },
-  });
-
-  const handleRemoveSubmit = (e) => {
-    e.preventDefault();
-    keyRemove.mutate(selectedName, {
-      onSuccess: () => {
-        setSelectedName('');
-      },
-    });
-  };
-
   useEffect(() => {
     if (carBlobFolderQuery.data) {
       setCarBlob(carBlobFolderQuery.data.carBlob);
@@ -189,35 +154,6 @@ export function Upload() {
                   </li>
                 ))}
               </ul>
-
-              <form className="mt-4 p-4 simple-border" onSubmit={handleRemoveSubmit}>
-                <h4 className="title is-4">Remove a keypair.</h4>
-                <div className="control mb-4">
-                  <div className={`select is-small ${keyRemove.isPending ? 'is-loading' : ''}`}>
-                    <select value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
-                      <option value="" disabled>
-                        Select a namespace
-                      </option>
-                      {deployments.data.map((deployments) => (
-                        <option key={deployments.name} value={deployments.name}>
-                          {deployments.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {keyRemove.isError ? (
-                    <p className="has-text-danger">An error occurred: {keyRemove.error?.message}</p>
-                  ) : null}
-                </div>
-                <button
-                  type="submit"
-                  className={`button is-small ${keyRemove.isPending ? 'is-loading' : ''}`}
-                  disabled={!selectedName}
-                >
-                  Submit
-                </button>
-                {keyRemove.isSuccess ? <p className="mt-4">Remove successfully!</p> : null}
-              </form>
             </>
           )}
         </>

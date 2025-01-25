@@ -8,11 +8,14 @@ export function useNamePublish() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ Name, rootCID }) => {
-      const response = await fetch(`${getApiUrl()}api/v0/name/publish?arg=${rootCID}&key=${Name}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    mutationFn: async ({ ipnsKey, rootCID }) => {
+      const response = await fetch(
+        `${getApiUrl()}api/v0/name/publish?arg=${rootCID}&key=${ipnsKey}`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (!response.ok) {
         throw new Error('Failed to publish');
       }

@@ -41,6 +41,13 @@ function NavLinksList({ isUserAuthenticated, isAdminAuthenticated, setParams }) 
             Namespace
           </Link>
           <Link
+            to={`?${makeSearch({ page: 'keys' })}`}
+            className="navbar-item"
+            onClick={() => setParams({ page: 'keys' })}
+          >
+            Keys
+          </Link>
+          <Link
             to={`?${makeSearch({ page: 'upload' })}`}
             className="navbar-item"
             onClick={() => setParams({ page: 'upload' })}
