@@ -6,9 +6,11 @@ import { Update } from './Update';
 import { useDeployments } from './useDeployments';
 import { useHelia } from './useHelia';
 import { usePinAdd } from './usePinAdd';
-import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
+import { useSynthetix } from './useSynthetix';
+import { carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array } from './utils';
 
 export function Upload() {
+  const [synthetix] = useSynthetix();
   const { heliaCar, fs, error, starting } = useHelia();
   const [files, setFiles] = useState([]);
   const [carBlob, setCarBlob] = useState(null);
@@ -33,8 +35,9 @@ export function Upload() {
 
   const kuboIpfsDagImportMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch('http://127.0.0.1:5001/api/v0/dag/import', {
+      const response = await fetch(`${getApiUrl()}api/v0/dag/import`, {
         method: 'POST',
+        headers: { Authorization: `Bearer ${synthetix.token}` },
         body: data,
       });
       if (!response.ok) {
@@ -50,8 +53,9 @@ export function Upload() {
 
   const kuboIpfsDagGetMutation = useMutation({
     mutationFn: async (rootCID) => {
-      const response = await fetch(`http://127.0.0.1:5001/api/v0/dag/get?arg=${rootCID}`, {
+      const response = await fetch(`${getApiUrl()}api/v0/dag/get?arg=${rootCID}`, {
         method: 'POST',
+        headers: { Authorization: `Bearer ${synthetix.token}` },
       });
       if (!response.ok) {
         throw new Error('DAG fetch failed');
