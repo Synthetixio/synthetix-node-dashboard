@@ -5,7 +5,6 @@ import { Publish } from './Publish';
 import { Update } from './Update';
 import { useDeployments } from './useDeployments';
 import { useHelia } from './useHelia';
-import { usePinAdd } from './usePinAdd';
 import { useSynthetix } from './useSynthetix';
 import { carWriterOutToBlob, downloadCarFile, getApiUrl, readFileAsUint8Array } from './utils';
 
@@ -18,7 +17,6 @@ export function Upload() {
   const [uploadResponse, setUploadResponse] = useState(null);
   const [dagData, setDagData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const pinAdd = usePinAdd();
 
   const handleFileEvent = useCallback((e) => {
     const filesToUpload = [...e.target.files];
@@ -35,7 +33,7 @@ export function Upload() {
 
   const kuboIpfsDagImportMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}api/v0/dag/import`, {
+      const response = await fetch(`${getApiUrl()}api/v0/dag/import?pin-roots=true`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${synthetix.token}` },
         body: data,
@@ -46,7 +44,6 @@ export function Upload() {
       return response.json();
     },
     onSuccess: (data) => {
-      pinAdd.mutate(data.Root.Cid['/']);
       setUploadResponse(data);
     },
   });
@@ -223,16 +220,6 @@ export function Upload() {
                 ) : null}
 
                 {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
-              </>
-            )}
-
-            {pinAdd.isPending ? (
-              'Pinning to IPFS..'
-            ) : (
-              <>
-                {pinAdd.isError ? <p className="has-text-danger">{pinAdd.error?.message}</p> : null}
-
-                {pinAdd.isSuccess ? <p>Successfully pinned to IPFS</p> : null}
               </>
             )}
           </div>

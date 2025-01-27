@@ -10,7 +10,7 @@ export function useNamePublish() {
   return useMutation({
     mutationFn: async ({ ipnsKey, rootCID }) => {
       const response = await fetch(
-        `${getApiUrl()}api/v0/name/publish?arg=${rootCID}&key=${ipnsKey}`,
+        `${getApiUrl()}api/v0/name/publish?key=${ipnsKey}&arg=/ipfs/${rootCID}&ttl=10s`,
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },

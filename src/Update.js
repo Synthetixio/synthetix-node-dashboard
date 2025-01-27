@@ -15,7 +15,11 @@ export function Update({ rootCID }) {
         e.preventDefault();
         namePublish.mutate(
           { ipnsKey, rootCID },
-          { onSuccess: (publishData) => setResponse(publishData) }
+          {
+            onSuccess: (publishData) => {
+              setResponse(publishData);
+            },
+          }
         );
       }}
     >
