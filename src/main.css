@@ -1,0 +1,90 @@
+:root {
+  --bulma-navbar-background-color: #06061b;
+  --bulma-scheme-main: #06061b;
+  --bulma-body-background-color: #06061b;
+  --bulma-navbar-height: 100%;
+  --bulma-body-color: #ffffff;
+  --bulma-arrow-color: #15a0be;
+}
+
+html {
+  font-family: "Inter", "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  color: #fff;
+  background: #06061b;
+}
+
+header {
+  border-bottom: 1px solid #303037;
+  height: 70px;
+}
+
+.navbar-item,
+.navbar-link {
+  color: #ffffff;
+}
+
+a.navbar-item:focus-within,
+a.navbar-item:hover {
+  background-color: #15a0be;
+}
+
+a.navbar-item {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.background {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(48, 48, 55, 0.2) 0px,
+    rgb(11, 11, 34) 1px,
+    transparent 0px,
+    transparent 50%
+  );
+  background-size: 8px 8px;
+  height: calc(100vh - 70px);
+}
+
+.button,
+.file-cta {
+  background-color: #15a0be;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 4px 10px;
+}
+
+table {
+  min-width: 720px;
+}
+
+tbody td,
+tbody td {
+  font-family: Monaco, Consolas, monospace;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.content table td,
+.content table th {
+  border-bottom-color: transparent;
+}
+
+.input {
+  background-color: transparent;
+}
+
+pre {
+  background-color: transparent;
+}
+
+.simple-border {
+  border: 1px solid #303037;
+}
+
+.select select.is-focused,
+.select select:focus,
+.select select:focus-within {
+  border-color: #15a0be;
+  box-shadow: none;
+}
