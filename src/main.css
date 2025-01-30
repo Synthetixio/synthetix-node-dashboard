@@ -5,6 +5,7 @@
   --bulma-navbar-height: 100%;
   --bulma-body-color: #ffffff;
   --bulma-arrow-color: #15a0be;
+  --bulma-code: #ffffff;
 }
 
 html {
@@ -19,19 +20,21 @@ header {
   height: 70px;
 }
 
-.navbar-item,
-.navbar-link {
+.card {
   color: #ffffff;
 }
 
-a.navbar-item:focus-within,
-a.navbar-item:hover {
-  background-color: #15a0be;
+a {
+  color: #15a0be;
 }
 
-a.navbar-item {
-  padding-left: 8px;
-  padding-right: 8px;
+a.project-name:hover {
+  text-decoration: underline;
+  text-decoration-color: #ffffff;
+}
+
+.modal-card-body {
+  background-color: #181b20;
 }
 
 .background {
@@ -87,4 +90,10 @@ pre {
 .select select:focus-within {
   border-color: #15a0be;
   box-shadow: none;
+}
+
+.not-published {
+  color: #aaa;
+  font-style: italic;
+  opacity: 0.7;
 }

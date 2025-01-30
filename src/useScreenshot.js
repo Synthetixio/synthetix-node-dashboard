@@ -2,23 +2,26 @@ import { useQuery } from '@tanstack/react-query';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl } from './utils';
 
-export function useIpnsKeys() {
+export function useScreenshot({ siteUrl, published }) {
   const [synthetix] = useSynthetix();
   const { chainId, token } = synthetix;
 
   return useQuery({
-    enabled: Boolean(chainId),
-    queryKey: [chainId, 'useIpnsKeys'],
+    enabled: Boolean(chainId && siteUrl && published),
+    queryKey: [chainId, 'useScreenshot', siteUrl, { published }],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}ipns-keys`, {
+      const response = await fetch(`${getApiUrl()}screenshot?url=${encodeURIComponent(siteUrl)}`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json();
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      return url;
     },
-    placeholderData: { keys: [] },
   });
 }
