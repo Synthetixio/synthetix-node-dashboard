@@ -1,4 +1,4 @@
-export function validateNamespace({ namespace, namespaces, generatedKeys }) {
+export function validateNamespace(namespace) {
   const errors = [];
 
   if (!namespace) {
@@ -21,14 +21,6 @@ export function validateNamespace({ namespace, namespaces, generatedKeys }) {
 
   if (/^_|_$/.test(namespace)) {
     errors.push('Namespace cannot start or end with an underscore (_).');
-  }
-
-  if (namespaces?.includes(namespace)) {
-    errors.push('Namespace already exists.');
-  }
-
-  if (generatedKeys?.includes(namespace)) {
-    errors.push('Keypair already exists.');
   }
 
   return errors;

@@ -7,18 +7,19 @@ import { useDagImport } from './useDagImport';
 import { useHelia } from './useHelia';
 import { useKeyRemove } from './useKeyRemove';
 import { useNamePublish } from './useNamePublish';
-import { useParams } from './useRoutes';
+import { usePageRoute, useParams } from './useRoutes';
 import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
 
 export function Project() {
   const { heliaCar, fs } = useHelia();
+  const [, setPage] = usePageRoute();
   const [params] = useParams();
   const [files, setFiles] = useState([]);
   const [carBlob, setCarBlob] = useState(null);
   const [rootCID, setRootCID] = useState(null);
   const [dagImportResponse, setDagImportResponse] = useState(null);
   const [dagData, setDagData] = useState(null);
-  const [fileUploadErrorMessage, setFileUploadErrorMessage] = useState('');
+  const [fileUploadError, setFileUploadError] = useState(null);
 
   const handleFolderUpload = useCallback((e) => {
     const filesToUpload = [...e.target.files];
@@ -30,16 +31,16 @@ export function Project() {
     const hasIndexHtml = filesToUpload.some((file) => file.name === 'index.html');
 
     if (!hasIndexHtml) {
-      setFileUploadErrorMessage('Error: The index.html file is required for upload!');
+      setFileUploadError('Error: The index.html file is required for upload!');
       return;
     }
 
-    setFileUploadErrorMessage('');
+    setFileUploadError(null);
     setFiles(filesToUpload);
   }, []);
 
   const kuboIpfsDagImportMutation = useDagImport();
-  const kuboIpfsDagGetMutation = useDagGet();
+  const dagGetMutation = useDagGet();
   const carBlobFolderQuery = useQuery({
     enabled: fs !== null && heliaCar !== null && files.length > 0,
     queryKey: [
@@ -106,12 +107,11 @@ export function Project() {
   };
 
   const keyRemoveMutation = useKeyRemove();
-  const [keyRemoveResponse, setKeyRemoveResponse] = React.useState(null);
   const handleKeyRemoval = () => {
     keyRemoveMutation.mutate(params.name, {
-      onSuccess: (data) => {
+      onSuccess: () => {
         setIsModalOpen(false);
-        setKeyRemoveResponse(data);
+        setPage('projects');
       },
     });
   };
@@ -157,7 +157,7 @@ export function Project() {
         name={params.name}
       />
 
-      {fileUploadErrorMessage && <p className="has-text-danger">{fileUploadErrorMessage}</p>}
+      {fileUploadError && <p className="has-text-danger">{fileUploadError}</p>}
 
       {rootCID == null || files.length === 0 ? null : (
         <>
@@ -173,10 +173,10 @@ export function Project() {
               </button>
               <button
                 type="button"
-                className={`button is-small ${kuboIpfsDagGetMutation.isPending ? 'is-loading' : ''}`}
-                disabled={!dagImportResponse || kuboIpfsDagGetMutation.isPending}
+                className={`button is-small ${dagGetMutation.isPending ? 'is-loading' : ''}`}
+                disabled={!dagImportResponse || dagGetMutation.isPending}
                 onClick={() => {
-                  kuboIpfsDagGetMutation.mutate(dagImportResponse.Root.Cid['/'], {
+                  dagGetMutation.mutate(dagImportResponse.Root.Cid['/'], {
                     onSuccess: setDagData,
                   });
                 }}
@@ -281,11 +281,6 @@ export function Project() {
             </>
           )}
 
-          {keyRemoveResponse ? (
-            <pre className="mt-4 is-size-7 simple-border">
-              {JSON.stringify(keyRemoveResponse, null, 2)}
-            </pre>
-          ) : null}
           {dagImportResponse ? (
             <pre className="mt-4 is-size-7 simple-border">
               {JSON.stringify(dagImportResponse, null, 2)}

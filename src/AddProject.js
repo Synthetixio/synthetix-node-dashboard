@@ -1,51 +1,66 @@
 import React from 'react';
-import { useGeneratedKeys } from './useGeneratedKeys';
 import { useKeyGen } from './useKeyGen';
 import { useMintNamespace } from './useMintNamespace';
-import { useNamespaces } from './useNamespaces';
+import { useUniqueGeneratedKey } from './useUniqueGeneratedKey';
+import { useUniqueNamespaceCheck } from './useUniqueNamespaceCheck';
 import { validateNamespace } from './validateNamespace';
+
+const NAMESPACE_EXISTS_ERROR = 'Namespace already exists.';
+const KEYPAIR_EXISTS_ERROR = 'Keypair already exists.';
 
 export function AddProject() {
   const mintNamespaceMutation = useMintNamespace();
   const keyGenMutation = useKeyGen();
+  const uniqueNamespaceMutation = useUniqueNamespaceCheck();
+  const uniqueGeneratedKeyMutation = useUniqueGeneratedKey();
   const [namespace, setNamespace] = React.useState('');
-  const [namespaceValidationErrors, setNamespaceValidationErrors] = React.useState([]);
-  const namespaces = useNamespaces();
-  const generatedKeys = useGeneratedKeys();
-
+  const [validationErrors, setValidationErrors] = React.useState([]);
   const [keyGenResponse, setKeyGenResponse] = React.useState(null);
+
+  const isNamespaceAlreadyExistsError =
+    validationErrors.includes(NAMESPACE_EXISTS_ERROR) &&
+    !validationErrors.includes(KEYPAIR_EXISTS_ERROR);
 
   const handleSubmitNamespace = async (e) => {
     e.preventDefault();
+    const errors = validateNamespace(namespace.trim());
 
-    const errors = validateNamespace({
-      namespace: namespace.trim(),
-      namespaces: namespaces.data?.namespaces,
-      generatedKeys: generatedKeys.data.keys,
-    });
+    const checks = await Promise.allSettled([
+      uniqueNamespaceMutation.mutateAsync(namespace),
+      uniqueGeneratedKeyMutation.mutateAsync(namespace),
+    ]);
+
+    if (checks[0].status === 'fulfilled' && !checks[0].value.unique) {
+      errors.push(NAMESPACE_EXISTS_ERROR);
+    } else if (checks[0].status === 'rejected') {
+      console.error('Namespace mutation error:', checks[0].reason);
+    }
+
+    if (checks[1].status === 'fulfilled' && !checks[1].value.unique) {
+      errors.push(KEYPAIR_EXISTS_ERROR);
+    } else if (checks[1].status === 'rejected') {
+      console.error('Generated key mutation error:', checks[1].reason);
+    }
 
     if (errors.length > 0) {
-      setNamespaceValidationErrors(errors);
+      setValidationErrors(errors);
       return;
     }
-    setNamespaceValidationErrors([]);
+
+    setValidationErrors([]);
     mintNamespaceMutation.mutate(namespace, {
       onSuccess: () => {
         setNamespace('');
-        handleGenerateIpnsKey(namespace);
+        handleGenerateKeypair(namespace);
       },
     });
   };
 
-  const handleGenerateIpnsKey = (namespace) => {
+  const handleGenerateKeypair = (namespace) => {
     keyGenMutation.mutate(namespace, {
       onSuccess: setKeyGenResponse,
     });
   };
-
-  const isNamespaceAlreadyExistsError =
-    namespaceValidationErrors.includes('Namespace already exists.') &&
-    !namespaceValidationErrors.includes('Keypair already exists.');
 
   return (
     <>
@@ -54,18 +69,18 @@ export function AddProject() {
         <div className="field">
           <div className="control">
             <input
-              className={`input ${namespaceValidationErrors.length > 0 ? 'is-danger' : ''} is-small`}
+              className={`input ${validationErrors.length > 0 ? 'is-danger' : ''} is-small`}
               type="text"
               placeholder="Enter project name"
               value={namespace}
               onChange={(e) => {
                 setNamespace(e.target.value);
-                setNamespaceValidationErrors([]);
+                setValidationErrors([]);
                 keyGenMutation.reset();
               }}
             />
           </div>
-          {namespaceValidationErrors.map((error, index) => (
+          {validationErrors.map((error, index) => (
             <p key={index} className="help is-danger">
               {error}
             </p>
@@ -76,12 +91,12 @@ export function AddProject() {
           className={`button is-small ${mintNamespaceMutation.isPending ? 'is-loading' : ''}`}
           disabled={
             !namespace.trim() ||
-            namespaces.isPending ||
-            generatedKeys.isPending ||
-            namespaceValidationErrors.length > 0
+            uniqueNamespaceMutation.isPending ||
+            uniqueGeneratedKeyMutation.isPending ||
+            validationErrors.length > 0
           }
         >
-          Add project
+          Save
         </button>
       </form>
 
@@ -113,7 +128,7 @@ export function AddProject() {
               <button
                 type="button"
                 className="button is-small"
-                onClick={() => handleGenerateIpnsKey(namespace)}
+                onClick={() => handleGenerateKeypair(namespace)}
               >
                 Retry Key Generation
               </button>
