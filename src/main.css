@@ -92,8 +92,18 @@ pre {
   box-shadow: none;
 }
 
-.not-published {
-  color: #aaa;
-  font-style: italic;
-  opacity: 0.7;
+.projects-list {
+  font-size: 14px;
+}
+
+.projects-list dd {
+  color: #ffffff;
+}
+
+.projects-list dt {
+  margin-bottom: 8px;
+}
+
+.projects-list li:not(:last-child) {
+  margin-bottom: 60px;
 }

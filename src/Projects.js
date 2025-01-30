@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Card } from './Card';
+import { ProjectItem } from './ProjectItem';
 import { useGeneratedKeys } from './useGeneratedKeys';
 import { makeSearch, useParams } from './useRoutes';
 
@@ -31,23 +31,21 @@ export function Projects() {
           {generatedKeys.data.keys.length === 0 ? (
             <p>No generatedKeys found.</p>
           ) : (
-            <>
-              <ul className="columns is-multiline">
-                {generatedKeys.data.keys.map(({ key, id, ipfs, published }) => {
-                  return (
-                    <li key={name} className="column is-4">
-                      <Card
-                        name={key}
-                        ipfs={ipfs || '/ipfs/unknown'}
-                        ipns={id}
-                        setParams={setParams}
-                        published={published}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
-            </>
+            <ul className="projects-list mt-6">
+              {generatedKeys.data.keys.map(({ key, id, ipfs, published }) => {
+                return (
+                  <li key={key}>
+                    <ProjectItem
+                      name={key}
+                      ipfs={ipfs || '/ipfs/unknown'}
+                      ipns={id}
+                      setParams={setParams}
+                      published={published}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </>
       )}

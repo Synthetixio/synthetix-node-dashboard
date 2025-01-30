@@ -235,13 +235,13 @@ export function Project() {
               ) : null}
 
               {namePublishMutation.isSuccess ? (
-                <p>Your content has been successfully published to IPNS!.</p>
+                <p>Your content has been successfully published to IPNS!</p>
               ) : null}
             </>
           )}
 
           {response ? (
-            <div>
+            <div className="is-flex is-gap-3">
               <span>
                 Visit&nbsp;
                 <a

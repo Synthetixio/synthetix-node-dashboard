@@ -48,6 +48,7 @@ export function AddProject() {
     }
 
     setValidationErrors([]);
+    setKeyGenResponse(null);
     mintNamespaceMutation.mutate(namespace, {
       onSuccess: () => {
         setNamespace('');
