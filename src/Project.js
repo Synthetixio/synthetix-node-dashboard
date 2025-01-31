@@ -258,11 +258,7 @@ export function Project() {
         </>
       )}
 
-      {namePublishResponse ||
-      dagImportResponse ||
-      dagData ||
-      rootCID == null ||
-      files.length === 0 ? (
+      {namePublishResponse || dagImportResponse || dagData || rootCID || files.length > 0 ? (
         <div className="mt-6">
           <CollapsibleSection title="Metadata">
             {rootCID == null || files.length === 0 ? null : (
