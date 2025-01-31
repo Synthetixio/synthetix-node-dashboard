@@ -77,6 +77,11 @@ tbody td {
   background-color: transparent;
 }
 
+.input:focus-within {
+  box-shadow: none;
+  border-color: #15a0be;
+}
+
 pre {
   background-color: transparent;
 }

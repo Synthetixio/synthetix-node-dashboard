@@ -1,19 +1,19 @@
 import { CarWriter } from '@ipld/car/writer';
 import { useQuery } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
+import CollapsibleSection from './CollapsibleSection';
 import { KeyRemovalConfirmationModal } from './KeyRemovalConfirmationModal';
 import { useDagGet } from './useDagGet';
 import { useDagImport } from './useDagImport';
 import { useHelia } from './useHelia';
 import { useKeyRemove } from './useKeyRemove';
 import { useNamePublish } from './useNamePublish';
-import { usePageRoute, useParams } from './useRoutes';
+import { useParams } from './useRoutes';
 import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
 
 export function Project() {
   const { heliaCar, fs } = useHelia();
-  const [, setPage] = usePageRoute();
-  const [params] = useParams();
+  const [params, setParams] = useParams();
   const [files, setFiles] = useState([]);
   const [carBlob, setCarBlob] = useState(null);
   const [rootCID, setRootCID] = useState(null);
@@ -95,13 +95,13 @@ export function Project() {
   }, [rootCID, carBlob, dagImportResponse, kuboIpfsDagImportMutation.mutate]);
 
   const namePublishMutation = useNamePublish();
-  const [response, setResponse] = React.useState(null);
+  const [namePublishResponse, setNamePublishResponse] = React.useState(null);
 
   const publishIpnsName = () => {
     namePublishMutation.mutate(
       { keyName: params.name, rootCID },
       {
-        onSuccess: setResponse,
+        onSuccess: setNamePublishResponse,
       }
     );
   };
@@ -111,7 +111,7 @@ export function Project() {
     keyRemoveMutation.mutate(params.name, {
       onSuccess: () => {
         setIsModalOpen(false);
-        setPage('projects');
+        setParams({ page: 'projects' });
       },
     });
   };
@@ -161,45 +161,20 @@ export function Project() {
 
       {rootCID == null || files.length === 0 ? null : (
         <>
-          <div className="mt-4 p-4 simple-border">
-            <div className="buttons">
-              <button
-                type="button"
-                className={`button is-small ${carBlobFolderQuery.isPending ? 'is-loading' : ''}`}
-                disabled={!carBlob}
-                onClick={() => downloadCarFile(carBlob)}
-              >
-                Download Car file
-              </button>
-              <button
-                type="button"
-                className={`button is-small ${dagGetMutation.isPending ? 'is-loading' : ''}`}
-                disabled={!dagImportResponse || dagGetMutation.isPending}
-                onClick={() => {
-                  dagGetMutation.mutate(dagImportResponse.Root.Cid['/'], {
-                    onSuccess: setDagData,
-                  });
-                }}
-              >
-                Get DAG Object
-              </button>
-            </div>
+          {kuboIpfsDagImportMutation.isPending ? (
+            <p>Uploading directory as a CAR file to IPFS..</p>
+          ) : (
+            <>
+              {kuboIpfsDagImportMutation.isError ? (
+                <p className="has-text-danger">{kuboIpfsDagImportMutation.error?.message}</p>
+              ) : null}
 
-            {kuboIpfsDagImportMutation.isPending ? (
-              <p>Uploading directory as a CAR file to IPFS..</p>
-            ) : (
-              <>
-                {kuboIpfsDagImportMutation.isError ? (
-                  <p className="has-text-danger">{kuboIpfsDagImportMutation.error?.message}</p>
-                ) : null}
-
-                {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
-              </>
-            )}
-          </div>
+              {kuboIpfsDagImportMutation.isSuccess ? <p>Successfully uploaded to IPFS</p> : null}
+            </>
+          )}
 
           {dagImportResponse?.Root.Cid['/'] ? (
-            <div className="mt-4">
+            <div className="my-4">
               <div className="mb-4">
                 <p>
                   <strong>IPFS Hash:</strong> <code>{dagImportResponse?.Root.Cid['/']}</code>
@@ -240,12 +215,12 @@ export function Project() {
             </>
           )}
 
-          {response ? (
+          {namePublishResponse ? (
             <div className="is-flex is-gap-3">
               <span>
                 Visit&nbsp;
                 <a
-                  href={`http://127.0.0.1:8080/ipns/${response.Name}/`}
+                  href={`http://127.0.0.1:8080/ipns/${namePublishResponse.Name}/`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -255,7 +230,7 @@ export function Project() {
               <span>
                 Visit&nbsp;
                 <a
-                  href={`http://127.0.0.1:8080${response.Value}/`}
+                  href={`http://127.0.0.1:8080${namePublishResponse.Value}/`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -280,20 +255,61 @@ export function Project() {
               ) : null}
             </>
           )}
-
-          {dagImportResponse ? (
-            <pre className="mt-4 is-size-7 simple-border">
-              {JSON.stringify(dagImportResponse, null, 2)}
-            </pre>
-          ) : null}
-          {dagData ? (
-            <pre className="mt-4 is-size-7 simple-border">{JSON.stringify(dagData, null, 2)}</pre>
-          ) : null}
-          {response ? (
-            <pre className="mt-4 is-size-7 simple-border">{JSON.stringify(response, null, 2)}</pre>
-          ) : null}
         </>
       )}
+
+      {namePublishResponse ||
+      dagImportResponse ||
+      dagData ||
+      rootCID == null ||
+      files.length === 0 ? (
+        <div className="mt-6">
+          <CollapsibleSection title="Metadata">
+            {rootCID == null || files.length === 0 ? null : (
+              <div className="buttons">
+                <button
+                  type="button"
+                  className={`button is-small ${carBlobFolderQuery.isPending ? 'is-loading' : ''}`}
+                  disabled={!carBlob}
+                  onClick={() => downloadCarFile(carBlob)}
+                >
+                  Download Car file
+                </button>
+                <button
+                  type="button"
+                  className={`button is-small ${dagGetMutation.isPending ? 'is-loading' : ''}`}
+                  disabled={!dagImportResponse || dagGetMutation.isPending}
+                  onClick={() => {
+                    dagGetMutation.mutate(dagImportResponse.Root.Cid['/'], {
+                      onSuccess: setDagData,
+                    });
+                  }}
+                >
+                  Get DAG Object
+                </button>
+              </div>
+            )}
+            {namePublishResponse ? (
+              <pre className="mt-4 is-size-7 simple-border">
+                <p>/api/v0/name/publish</p>
+                {JSON.stringify(namePublishResponse, null, 2)}
+              </pre>
+            ) : null}
+            {dagImportResponse ? (
+              <pre className="mt-4 is-size-7 simple-border">
+                <p>/api/v0/dag/import</p>
+                {JSON.stringify(dagImportResponse, null, 2)}
+              </pre>
+            ) : null}
+            {dagData ? (
+              <pre className="mt-4 is-size-7 simple-border">
+                <p>Dag Data</p>
+                {JSON.stringify(dagData, null, 2)}
+              </pre>
+            ) : null}
+          </CollapsibleSection>
+        </div>
+      ) : null}
     </>
   );
 }

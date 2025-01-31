@@ -21,7 +21,7 @@ export function useMintNamespace() {
         console.log({ tx });
         const result = await tx.wait();
         console.log({ result });
-        return { transactionHash: result.txHash };
+        return { transaction: result };
       } catch (error) {
         if (error.reason) {
           throw new Error(`Reason for error: ${error.reason}`);

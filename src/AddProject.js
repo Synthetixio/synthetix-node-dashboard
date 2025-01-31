@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleSection from './CollapsibleSection';
 import { useKeyGen } from './useKeyGen';
 import { useMintNamespace } from './useMintNamespace';
 import { useUniqueGeneratedKey } from './useUniqueGeneratedKey';
@@ -15,6 +16,7 @@ export function AddProject() {
   const uniqueGeneratedKeyMutation = useUniqueGeneratedKey();
   const [namespace, setNamespace] = React.useState('');
   const [validationErrors, setValidationErrors] = React.useState([]);
+  const [mintNamespaceResponse, setMintNamespaceResponse] = React.useState(null);
   const [keyGenResponse, setKeyGenResponse] = React.useState(null);
 
   const isNamespaceAlreadyExistsError =
@@ -50,9 +52,10 @@ export function AddProject() {
     setValidationErrors([]);
     setKeyGenResponse(null);
     mintNamespaceMutation.mutate(namespace, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setNamespace('');
         handleGenerateKeypair(namespace);
+        setMintNamespaceResponse(data);
       },
     });
   };
@@ -140,10 +143,32 @@ export function AddProject() {
         </>
       )}
 
-      {keyGenResponse ? (
-        <pre className="mt-4 is-size-7 simple-border">
-          {JSON.stringify(keyGenResponse, null, 2)}
-        </pre>
+      {keyGenResponse || mintNamespaceResponse ? (
+        <div className="mt-6">
+          <CollapsibleSection title="Metadata">
+            {keyGenResponse ? (
+              <pre className="mt-4 is-size-7 simple-border">
+                <p>/api/v0/key/gen</p>
+                {JSON.stringify(keyGenResponse, null, 2)}
+              </pre>
+            ) : null}
+            {mintNamespaceResponse ? (
+              <pre className="mt-4 is-size-7 simple-border">
+                <p>Minting Transaction Details</p>
+                <p>Transaction Hash: {mintNamespaceResponse.transaction?.hash}</p>
+                <p>Status: {mintNamespaceResponse.transaction?.status}</p>
+                <p>Block Number: {mintNamespaceResponse.transaction?.blockNumber}</p>
+                <p>Block Hash: {mintNamespaceResponse.transaction?.blockHash}</p>
+                <p>From: {mintNamespaceResponse.transaction?.from}</p>
+                <p>To: {mintNamespaceResponse.transaction?.to}</p>
+                <p>Gas Used: {mintNamespaceResponse.transaction?.gasUsed}</p>
+                <p>Gas Price: {mintNamespaceResponse.transaction?.gasPrice}</p>
+                <p>Cumulative Gas Used: {mintNamespaceResponse.transaction?.cumulativeGasUsed}</p>
+                <p>Contract Address: {mintNamespaceResponse.transaction?.contractAddress}</p>
+              </pre>
+            ) : null}
+          </CollapsibleSection>
+        </div>
       ) : null}
     </>
   );

@@ -1,0 +1,78 @@
+.CollapsibleSection .ReactCollapse--collapse {
+  margin-bottom: 0;
+  transition: height 500ms, margin-bottom 500ms;
+  font-size: 14px;
+}
+
+.CollapsibleSection.opened .ReactCollapse--collapse {
+  margin-bottom: -2rem;
+}
+
+.CollapsibleSection .ReactCollapse--content {
+  font-weight: 400;
+  line-height: 30px;
+  position: relative;
+  padding: 4.5rem 1.5rem 2.5rem;
+  color: #bfbfbf;
+  border-bottom-right-radius: 2rem;
+  border-bottom-left-radius: 2rem;
+  background-color: #06061b;
+}
+
+.CollapsibleSection .button-collapse {
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  margin-bottom: -2rem;
+  padding: 1.125rem 4rem 1.125rem 1.25rem;
+  cursor: pointer;
+  text-align: left;
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  background-color: #06061b;
+}
+
+.CollapsibleSection .button-collapse .open,
+.CollapsibleSection .button-collapse .close {
+  position: absolute;
+  top: 1.125rem;
+  right: 1.25rem;
+  width: 2.75rem;
+  transition: opacity 500ms;
+}
+
+.CollapsibleSection .button-collapse .open svg,
+.CollapsibleSection .button-collapse .close svg {
+  width: 2.75rem;
+}
+
+.CollapsibleSection .open {
+  opacity: 1;
+}
+
+.CollapsibleSection .close {
+  opacity: 0;
+}
+
+.CollapsibleSection.opened .open {
+  opacity: 0;
+}
+
+.CollapsibleSection.opened .close {
+  opacity: 1;
+}
+
+.CollapsibleSection .button-collapse .open svg {
+  color: #15a0be;
+}
+
+.CollapsibleSection .button-collapse .close svg {
+  color: #000000;
+}
+
+.CollapsibleSection.opened .button-collapse {
+  background-image: linear-gradient(270deg, #15a0be 0%, #17647d 40%, rgba(21, 160, 190, 0) 68%);
+}
