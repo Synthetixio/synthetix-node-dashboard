@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { makeSearch } from './useRoutes';
 import { useScreenshot } from './useScreenshot';
@@ -6,21 +5,15 @@ import { useScreenshot } from './useScreenshot';
 export function ProjectItem({ name, ipfs, ipns, setParams, published }) {
   const screenshot = useScreenshot({ siteUrl: `http://127.0.0.1:8080/ipns/${ipns}/`, published });
 
-  useEffect(() => {
-    return () => {
-      if (screenshot.data) {
-        URL.revokeObjectURL(screenshot.data);
-      }
-    };
-  }, [screenshot.data]);
-
   return (
     <section className="hero">
       <div className="hero-body columns is-12 box p-5">
         <div className="column is-two-fifths p-0">
           <figure className="image is-16by9">
             <img
-              src={screenshot.data || 'https://bulma.io/assets/images/placeholders/1280x960.png'}
+              src={
+                screenshot.data?.image || 'https://bulma.io/assets/images/placeholders/1280x960.png'
+              }
               alt={name || 'Project screenshot'}
             />
           </figure>

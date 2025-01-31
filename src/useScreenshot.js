@@ -19,9 +19,7 @@ export function useScreenshot({ siteUrl, published }) {
         throw new Error('Network response was not ok');
       }
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      return url;
+      return response.json();
     },
   });
 }
