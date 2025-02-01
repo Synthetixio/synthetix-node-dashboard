@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl } from './utils';
 
-export function useNamespaces() {
+export function useGeneratedKeys() {
   const [synthetix] = useSynthetix();
   const { chainId, token } = synthetix;
 
   return useQuery({
     enabled: Boolean(chainId),
-    queryKey: [chainId, 'useNamespaces'],
+    queryKey: [chainId, 'useGeneratedKeys'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}namespaces`, {
+      const response = await fetch(`${getApiUrl()}generated-keys`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -19,6 +19,6 @@ export function useNamespaces() {
       }
       return response.json();
     },
-    placeholderData: { namespaces: [] },
+    placeholderData: { keys: [] },
   });
 }

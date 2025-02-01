@@ -1,0 +1,12 @@
+[Unit]
+Description=Webpack Dev Server for dash-frontend
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/yarn start
+Restart=always
+User=root
+WorkingDirectory=/root/WebstormProjects/dash-frontend
+
+[Install]
+WantedBy=multi-user.target

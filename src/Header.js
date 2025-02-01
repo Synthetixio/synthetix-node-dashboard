@@ -7,68 +7,6 @@ import { makeSearch, useParams } from './useRoutes';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl, saveToken } from './utils';
 
-function NavLinksList({ isUserAuthenticated, isAdminAuthenticated, setParams }) {
-  return (
-    <>
-      <Link
-        to={`?${makeSearch({ page: 'stats' })}`}
-        className="navbar-item"
-        onClick={() => setParams({ page: 'stats' })}
-      >
-        Home
-      </Link>
-      {isUserAuthenticated ? (
-        <>
-          <Link
-            to={`?${makeSearch({ page: 'registration' })}`}
-            className="navbar-item"
-            onClick={() => setParams({ page: 'registration' })}
-          >
-            Registration
-          </Link>
-          <Link
-            to={`?${makeSearch({ page: 'refresh-api-key' })}`}
-            className="navbar-item"
-            onClick={() => setParams({ page: 'refresh-api-key' })}
-          >
-            Refresh Api Key
-          </Link>
-          <Link
-            to={`?${makeSearch({ page: 'namespace' })}`}
-            className="navbar-item"
-            onClick={() => setParams({ page: 'namespace' })}
-          >
-            Namespace
-          </Link>
-          <Link
-            to={`?${makeSearch({ page: 'keys' })}`}
-            className="navbar-item"
-            onClick={() => setParams({ page: 'keys' })}
-          >
-            Keys
-          </Link>
-          <Link
-            to={`?${makeSearch({ page: 'upload' })}`}
-            className="navbar-item"
-            onClick={() => setParams({ page: 'upload' })}
-          >
-            Upload
-          </Link>
-        </>
-      ) : null}
-      {isAdminAuthenticated ? (
-        <Link
-          to={`?${makeSearch({ page: 'admin' })}`}
-          className="navbar-item"
-          onClick={() => setParams({ page: 'admin' })}
-        >
-          Admin
-        </Link>
-      ) : null}
-    </>
-  );
-}
-
 const makeUnauthenticatedRequest = async (endpoint, data) => {
   const response = await fetch(`${getApiUrl()}${endpoint}`, {
     method: 'POST',
@@ -94,7 +32,8 @@ export function Header() {
   const permissions = usePermissions();
   const [, setParams] = useParams();
   const isUserAuthenticated = walletAddress && token;
-  const isAdminAuthenticated = isUserAuthenticated && permissions.data?.isAdmin;
+  const isUserAuthenticatedAndGranted = isUserAuthenticated && permissions.data?.isGranted;
+  const isUserAuthenticatedAndAdmin = isUserAuthenticated && permissions.data?.isAdmin;
 
   const signupMutation = useMutation({
     mutationFn: (data) => makeUnauthenticatedRequest('signup', data),
@@ -131,19 +70,38 @@ export function Header() {
             </Link>
           </div>
 
-          <div className="navbar-menu">
-            <div className="navbar-start">
-              <NavLinksList
-                isUserAuthenticated={isUserAuthenticated}
-                isAdminAuthenticated={isAdminAuthenticated}
-                setParams={setParams}
-              />
-            </div>
-          </div>
-
           <div className="navbar-end">
             <div className="navbar-item">
               <div className="buttons">
+                {isUserAuthenticatedAndAdmin ? (
+                  <Link
+                    to={`?${makeSearch({ page: 'admin' })}`}
+                    onClick={() => setParams({ page: 'admin' })}
+                    className="button is-small"
+                  >
+                    Admin
+                  </Link>
+                ) : null}
+                {isUserAuthenticated ? (
+                  <>
+                    <Link
+                      to={`?${makeSearch({ page: 'refresh-api-key' })}`}
+                      onClick={() => setParams({ page: 'refresh-api-key' })}
+                      className="button is-small"
+                    >
+                      Refresh Api Key
+                    </Link>
+                  </>
+                ) : null}
+                {isUserAuthenticatedAndGranted ? (
+                  <Link
+                    to={`?${makeSearch({ page: 'projects' })}`}
+                    onClick={() => setParams({ page: 'projects' })}
+                    className="button is-small"
+                  >
+                    Projects
+                  </Link>
+                ) : null}
                 <a
                   className="button is-small"
                   href="https://github.com/synthetixio/synthetix-node"
@@ -183,16 +141,6 @@ export function Header() {
                   </button>
                 ) : null}
               </div>
-            </div>
-          </div>
-
-          <div className="navbar-item has-dropdown">
-            <div className="navbar-dropdown">
-              <NavLinksList
-                isUserAuthenticated={isUserAuthenticated}
-                isAdminAuthenticated={isAdminAuthenticated}
-                setParams={setParams}
-              />
             </div>
           </div>
         </div>

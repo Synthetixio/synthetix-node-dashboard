@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Contract } from 'ethers';
 import { importNamespace } from './importNamespace';
 import { useSynthetix } from './useSynthetix';
@@ -6,7 +6,6 @@ import { useSynthetix } from './useSynthetix';
 export function useMintNamespace() {
   const [synthetix] = useSynthetix();
   const { walletAddress, provider, signer, chainId } = synthetix;
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: [chainId, { walletAddress }, 'useMintNamespace'],
@@ -22,7 +21,7 @@ export function useMintNamespace() {
         console.log({ tx });
         const result = await tx.wait();
         console.log({ result });
-        return { transactionHash: result.txHash };
+        return { transaction: result };
       } catch (error) {
         if (error.reason) {
           throw new Error(`Reason for error: ${error.reason}`);
@@ -32,11 +31,6 @@ export function useMintNamespace() {
         }
         throw new Error(`No specific reason provided in error object: ${error}`);
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [chainId, 'useNamespaces'],
-      });
     },
   });
 }

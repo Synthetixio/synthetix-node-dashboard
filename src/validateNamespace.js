@@ -1,4 +1,4 @@
-export function validateNamespace(namespace, namespaces) {
+export function validateNamespace(namespace) {
   const errors = [];
 
   if (!namespace) {
@@ -9,16 +9,18 @@ export function validateNamespace(namespace, namespaces) {
     errors.push('Namespace must be between 3 and 30 characters long.');
   }
 
-  if (!/^[a-zA-Z0-9-]+$/.test(namespace)) {
-    errors.push('Namespace can only contain letters, numbers, and hyphens (-).');
+  if (!/^[a-z0-9-_]+$/.test(namespace)) {
+    errors.push(
+      'Namespace must be DNS-compatible: lowercase letters, numbers, dashes (-), or underscores (_).'
+    );
   }
 
   if (/^-|-$/.test(namespace)) {
-    errors.push('Namespace cannot start or end with a hyphen (-).');
+    errors.push('Namespace cannot start or end with a dash (-).');
   }
 
-  if (namespaces?.includes(namespace)) {
-    errors.push('Namespace already exists in the list.');
+  if (/^_|_$/.test(namespace)) {
+    errors.push('Namespace cannot start or end with an underscore (_).');
   }
 
   return errors;

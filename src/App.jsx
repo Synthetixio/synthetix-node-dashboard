@@ -15,34 +15,34 @@ const Registration = React.lazy(() =>
   )
 );
 
+const Projects = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "projects" */ './Projects').then((m) => ({
+      default: m.Projects,
+    }))
+  )
+);
+
+const AddProject = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "add-project" */ './AddProject').then((m) => ({
+      default: m.AddProject,
+    }))
+  )
+);
+
+const Project = React.lazy(() =>
+  safeImport(() =>
+    import(/* webpackChunkName: "project" */ './Project').then((m) => ({
+      default: m.Project,
+    }))
+  )
+);
+
 const RefreshApiKey = React.lazy(() =>
   safeImport(() =>
     import(/* webpackChunkName: "refresh-api-key" */ './RefreshApiKey').then((m) => ({
       default: m.RefreshApiKey,
-    }))
-  )
-);
-
-const Namespace = React.lazy(() =>
-  safeImport(() =>
-    import(/* webpackChunkName: "namespace" */ './Namespace').then((m) => ({
-      default: m.Namespace,
-    }))
-  )
-);
-
-const Keys = React.lazy(() =>
-  safeImport(() =>
-    import(/* webpackChunkName: "keys" */ './Keys').then((m) => ({
-      default: m.Keys,
-    }))
-  )
-);
-
-const Upload = React.lazy(() =>
-  safeImport(() =>
-    import(/* webpackChunkName: "upload" */ './Upload').then((m) => ({
-      default: m.Upload,
     }))
   )
 );
@@ -71,7 +71,8 @@ function Routes() {
   const [params, setParams] = useParams();
   const { walletAddress, token } = synthetix;
   const isUserAuthenticated = walletAddress && token;
-  const isAdminAuthenticated = isUserAuthenticated && permissions.data?.isAdmin;
+  const isUserAuthenticatedAndGranted = isUserAuthenticated && permissions.data?.isGranted;
+  const isUserAuthenticatedAndAdmin = isUserAuthenticated && permissions.data?.isAdmin;
 
   function renderRoute() {
     switch (true) {
@@ -83,6 +84,44 @@ function Routes() {
             </React.Suspense>
           </ProtectedRoute>
         );
+      case params.page === 'projects':
+        return (
+          <ProtectedRoute
+            isAllowed={isUserAuthenticatedAndGranted}
+            goTo={setParams}
+            redirectPath="registration"
+          >
+            <React.Suspense fallback={null}>
+              <Projects />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case params.page === 'add-project':
+        return (
+          <ProtectedRoute
+            isAllowed={isUserAuthenticatedAndGranted}
+            goTo={setParams}
+            redirectPath="registration"
+          >
+            <React.Suspense fallback={null}>
+              <AddProject />
+            </React.Suspense>
+          </ProtectedRoute>
+        );
+      case params.page === 'project':
+        return (
+          <ProtectedRoute
+            isAllowed={isUserAuthenticatedAndGranted}
+            goTo={setParams}
+            redirectPath="registration"
+          >
+            <React.Suspense fallback={null}>
+              <HeliaProvider>
+                <Project />
+              </HeliaProvider>
+            </React.Suspense>
+          </ProtectedRoute>
+        );
       case params.page === 'refresh-api-key':
         return (
           <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
@@ -91,35 +130,9 @@ function Routes() {
             </React.Suspense>
           </ProtectedRoute>
         );
-      case params.page === 'namespace':
-        return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
-            <React.Suspense fallback={null}>
-              <Namespace />
-            </React.Suspense>
-          </ProtectedRoute>
-        );
-      case params.page === 'keys':
-        return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
-            <React.Suspense fallback={null}>
-              <Keys />
-            </React.Suspense>
-          </ProtectedRoute>
-        );
-      case params.page === 'upload':
-        return (
-          <ProtectedRoute isAllowed={isUserAuthenticated} goTo={setParams}>
-            <React.Suspense fallback={null}>
-              <HeliaProvider>
-                <Upload />
-              </HeliaProvider>
-            </React.Suspense>
-          </ProtectedRoute>
-        );
       case params.page === 'admin':
         return (
-          <ProtectedRoute isAllowed={isAdminAuthenticated} goTo={setParams}>
+          <ProtectedRoute isAllowed={isUserAuthenticatedAndAdmin} goTo={setParams}>
             <React.Suspense fallback={null}>
               <Admin />
             </React.Suspense>
