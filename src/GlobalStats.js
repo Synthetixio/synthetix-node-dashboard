@@ -75,7 +75,7 @@ export function GlobalStats() {
           ) : null}
 
           <h4 className="title is-4 has-text-centered">
-            {data?.peers.length === 1 ? '1 Node' : `${data?.peers.length} Nodes`}
+            {data?.peers.length === 1 ? '1 Node_Test' : `${data?.peers.length} Nodes_Test`}
           </h4>
           <table>
             <thead>
