@@ -1,0 +1,72 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "http://45.146.7.38:3005/api/:path*"
+    },
+    {
+      "source": "/signup",
+      "destination": "http://45.146.7.38:3005/signup"
+    },
+    {
+      "source": "/verify",
+      "destination": "http://45.146.7.38:3005/verify"
+    },
+    {
+      "source": "/protected",
+      "destination": "http://45.146.7.38:3005/protected"
+    },
+    {
+      "source": "/approved-wallets",
+      "destination": "http://45.146.7.38:3005/approved-wallets"
+    },
+    {
+      "source": "/submitted-wallets",
+      "destination": "http://45.146.7.38:3005/submitted-wallets"
+    },
+    {
+      "source": "/refresh-token",
+      "destination": "http://45.146.7.38:3005/refresh-token"
+    },
+    {
+      "source": "/unique-namespace",
+      "destination": "http://45.146.7.38:3005/unique-namespace"
+    },
+    {
+      "source": "/unique-generated-key",
+      "destination": "http://45.146.7.38:3005/unique-generated-key"
+    },
+    {
+      "source": "/generated-keys",
+      "destination": "http://45.146.7.38:3005/generated-keys"
+    },
+    {
+      "source": "/screenshot",
+      "destination": "http://45.146.7.38:3005/screenshot"
+    },
+    {
+      "source": "/api/v0/cat",
+      "destination": "http://45.146.7.38:3005/api/v0/cat"
+    },
+    {
+      "source": "/api/v0/key/gen",
+      "destination": "http://45.146.7.38:3005/api/v0/key/gen"
+    },
+    {
+      "source": "/api/v0/key/rm",
+      "destination": "http://45.146.7.38:3005/api/v0/key/rm"
+    },
+    {
+      "source": "/api/v0/name/publish",
+      "destination": "http://45.146.7.38:3005/api/v0/name/publish"
+    },
+    {
+      "source": "/api/v0/dag/import",
+      "destination": "http://45.146.7.38:3005/api/v0/dag/import"
+    },
+    {
+      "source": "/api/v0/dag/get",
+      "destination": "http://45.146.7.38:3005/api/v0/dag/get"
+    }
+  ]
+}
