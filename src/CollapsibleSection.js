@@ -1,5 +1,5 @@
-import ChevronDownIcon from '../lib/Icons/chevron-down-solid.svg';
-import CloseIcon from '../lib/Icons/xmark-solid.svg';
+import ChevronDownIcon from '../icons/chevron-down-solid.svg';
+import CloseIcon from '../icons/xmark-solid.svg';
 
 import React from 'react';
 import { Collapse } from 'react-collapse';

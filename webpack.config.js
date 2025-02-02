@@ -67,6 +67,7 @@ const svgUrlRule = {
     //
     /\/lib\/Icons\//,
     /\/@material-design-icons\/svg\//,
+    /\/icons\//,
   ],
   type: 'asset/resource',
 };
@@ -77,6 +78,7 @@ const svgSourceRule = {
     //
     /\/lib\/Icons\//,
     /\/@material-design-icons\/svg\//,
+    /\/icons\//,
   ],
   type: 'asset/source',
 };
