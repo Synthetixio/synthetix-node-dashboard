@@ -1,13 +1,12 @@
 import React from 'react';
 import CollapsibleSection from './CollapsibleSection';
+import ProgressTracker from './ProgressTracker';
 import { useKeyGen } from './useKeyGen';
 import { useMintNamespace } from './useMintNamespace';
 import { useUniqueGeneratedKey } from './useUniqueGeneratedKey';
 import { useUniqueNamespaceCheck } from './useUniqueNamespaceCheck';
+import { getApiUrl } from './utils';
 import { validateNamespace } from './validateNamespace';
-
-const NAMESPACE_EXISTS_ERROR = 'Namespace already exists.';
-const KEYPAIR_EXISTS_ERROR = 'Keypair already exists.';
 
 export function AddProject() {
   const mintNamespaceMutation = useMintNamespace();
@@ -16,32 +15,36 @@ export function AddProject() {
   const uniqueGeneratedKeyMutation = useUniqueGeneratedKey();
   const [namespace, setNamespace] = React.useState('');
   const [validationErrors, setValidationErrors] = React.useState([]);
-  const [mintNamespaceResponse, setMintNamespaceResponse] = React.useState(null);
-  const [keyGenResponse, setKeyGenResponse] = React.useState(null);
-
-  const isNamespaceAlreadyExistsError =
-    validationErrors.includes(NAMESPACE_EXISTS_ERROR) &&
-    !validationErrors.includes(KEYPAIR_EXISTS_ERROR);
+  const [checks, setChecks] = React.useState(null);
 
   const handleSubmitNamespace = async (e) => {
     e.preventDefault();
-    const errors = validateNamespace(namespace.trim());
+    setValidationErrors([]);
 
-    const checks = await Promise.allSettled([
+    const validationErrors = validateNamespace(namespace.trim());
+    if (validationErrors.length > 0) {
+      setValidationErrors(validationErrors);
+      return;
+    }
+
+    const [namespaceCheck, keyCheck] = await Promise.allSettled([
       uniqueNamespaceMutation.mutateAsync(namespace),
       uniqueGeneratedKeyMutation.mutateAsync(namespace),
     ]);
 
-    if (checks[0].status === 'fulfilled' && !checks[0].value.unique) {
-      errors.push(NAMESPACE_EXISTS_ERROR);
-    } else if (checks[0].status === 'rejected') {
-      console.error('Namespace mutation error:', checks[0].reason);
+    setChecks([namespaceCheck, keyCheck]);
+
+    const errors = [];
+    if (namespaceCheck.status === 'fulfilled' && !namespaceCheck.value.unique) {
+      errors.push('Namespace already exists.');
+    } else if (namespaceCheck.status === 'rejected') {
+      errors.push('Error validating namespace.');
     }
 
-    if (checks[1].status === 'fulfilled' && !checks[1].value.unique) {
-      errors.push(KEYPAIR_EXISTS_ERROR);
-    } else if (checks[1].status === 'rejected') {
-      console.error('Generated key mutation error:', checks[1].reason);
+    if (keyCheck.status === 'fulfilled' && !keyCheck.value.unique) {
+      errors.push('Keypair already exists.');
+    } else if (keyCheck.status === 'rejected') {
+      errors.push('Error validating keypair.');
     }
 
     if (errors.length > 0) {
@@ -49,22 +52,68 @@ export function AddProject() {
       return;
     }
 
-    setValidationErrors([]);
-    setKeyGenResponse(null);
     mintNamespaceMutation.mutate(namespace, {
-      onSuccess: (data) => {
-        setNamespace('');
-        handleGenerateKeypair(namespace);
-        setMintNamespaceResponse(data);
+      onSuccess: () => {
+        keyGenMutation.mutate(namespace);
       },
     });
   };
 
-  const handleGenerateKeypair = (namespace) => {
-    keyGenMutation.mutate(namespace, {
-      onSuccess: setKeyGenResponse,
-    });
-  };
+  const progress = [
+    {
+      id: 'namespace_validation',
+      text: 'Validating namespace...',
+      status: uniqueNamespaceMutation.status,
+      errorMessage: uniqueNamespaceMutation.error?.message || 'Unknown error occurred.',
+      response:
+        uniqueNamespaceMutation.isSuccess && checks?.[0]?.status === 'fulfilled'
+          ? checks[0].value
+          : null,
+      requestUrl: `${getApiUrl()}unique-namespace`,
+      payload: JSON.stringify({ namespace }),
+    },
+    {
+      id: 'key_validation',
+      text: 'Validating keypair...',
+      status: uniqueGeneratedKeyMutation.status,
+      errorMessage: uniqueGeneratedKeyMutation.error?.message || 'Unknown error occurred.',
+      response:
+        uniqueGeneratedKeyMutation.isSuccess && checks?.[1]?.status === 'fulfilled'
+          ? checks[1].value
+          : null,
+      requestUrl: `${getApiUrl()}unique-generated-key`,
+      payload: JSON.stringify({ namespace }),
+    },
+    {
+      id: 'mint_namespace',
+      text: 'Minting namespace...',
+      status: mintNamespaceMutation.status,
+      errorMessage: mintNamespaceMutation.error?.message || 'Unknown error occurred.',
+      response: mintNamespaceMutation.isSuccess ? mintNamespaceMutation.data : null,
+      requestUrl: 'Executing safeMint on the contract.',
+    },
+    {
+      id: 'key_generation',
+      text: 'Generating keypair...',
+      status: keyGenMutation.status,
+      errorMessage: keyGenMutation.error?.message || 'Unknown error occurred.',
+      response: keyGenMutation.isSuccess ? keyGenMutation.data : null,
+      requestUrl: `${getApiUrl()}api/v0/key/gen?arg=${namespace}&type=rsa`,
+      kuboCli: `ipfs key gen ${namespace} --type=rsa`,
+    },
+  ];
+
+  const isMutating =
+    uniqueNamespaceMutation.isPending ||
+    uniqueGeneratedKeyMutation.isPending ||
+    mintNamespaceMutation.isPending ||
+    keyGenMutation.isPending;
+
+  const hasProgress =
+    uniqueNamespaceMutation.status !== 'idle' ||
+    uniqueGeneratedKeyMutation.status !== 'idle' ||
+    mintNamespaceMutation.status !== 'idle' ||
+    keyGenMutation.status !== 'idle';
 
   return (
     <>
@@ -79,8 +128,8 @@ export function AddProject() {
               value={namespace}
               onChange={(e) => {
                 setNamespace(e.target.value);
-                setValidationErrors([]);
-                keyGenMutation.reset();
+                if (validationErrors.length > 0) setValidationErrors([]);
+                if (checks) setChecks(null);
               }}
             />
           </div>
@@ -92,81 +141,27 @@ export function AddProject() {
         </div>
         <button
           type="submit"
-          className={`button is-small ${mintNamespaceMutation.isPending ? 'is-loading' : ''}`}
-          disabled={
-            !namespace.trim() ||
-            uniqueNamespaceMutation.isPending ||
-            uniqueGeneratedKeyMutation.isPending ||
-            validationErrors.length > 0
-          }
+          className={`button is-small ${isMutating ? 'is-loading' : ''}`}
+          disabled={!namespace.trim() || isMutating || validationErrors.length > 0}
         >
           Save
         </button>
       </form>
 
-      {mintNamespaceMutation.isPending ? (
-        <p>Submitting transaction to mint namespace on the blockchain..</p>
-      ) : (
-        <>
-          {mintNamespaceMutation.isError ? (
-            <p className="help is-danger">
-              An error occurred: {mintNamespaceMutation.error?.message || 'Unknown error occurred.'}
-            </p>
-          ) : null}
+      {keyGenMutation.isError ? (
+        <button
+          type="button"
+          className="button is-small"
+          onClick={() => keyGenMutation.mutate(namespace)}
+        >
+          Retry Key Generation
+        </button>
+      ) : null}
 
-          {mintNamespaceMutation.isSuccess ? <p>Namespace submitted successfully!</p> : null}
-        </>
-      )}
-
-      {keyGenMutation.isPending ? (
-        <p>Generating a new IPNS keypair on the server..</p>
-      ) : (
-        <>
-          {keyGenMutation.isError || isNamespaceAlreadyExistsError ? (
-            <div className="mt-4">
-              <p className="has-text-danger">
-                {keyGenMutation.isError
-                  ? `An error occurred: ${keyGenMutation.error?.message || 'Unknown error occurred.'}`
-                  : ''}
-              </p>
-              <button
-                type="button"
-                className="button is-small"
-                onClick={() => handleGenerateKeypair(namespace)}
-              >
-                Retry Key Generation
-              </button>
-            </div>
-          ) : null}
-
-          {keyGenMutation.isSuccess ? <p>Keypair created successfully!</p> : null}
-        </>
-      )}
-
-      {keyGenResponse || mintNamespaceResponse ? (
+      {hasProgress ? (
         <div className="mt-6">
-          <CollapsibleSection title="Metadata">
-            {keyGenResponse ? (
-              <pre className="mt-4 is-size-7 simple-border">
-                <p>/api/v0/key/gen</p>
-                {JSON.stringify(keyGenResponse, null, 2)}
-              </pre>
-            ) : null}
-            {mintNamespaceResponse ? (
-              <pre className="mt-4 is-size-7 simple-border">
-                <p>Minting Transaction Details</p>
-                <p>Transaction Hash: {mintNamespaceResponse.transaction?.hash}</p>
-                <p>Status: {mintNamespaceResponse.transaction?.status}</p>
-                <p>Block Number: {mintNamespaceResponse.transaction?.blockNumber}</p>
-                <p>Block Hash: {mintNamespaceResponse.transaction?.blockHash}</p>
-                <p>From: {mintNamespaceResponse.transaction?.from}</p>
-                <p>To: {mintNamespaceResponse.transaction?.to}</p>
-                <p>Gas Used: {mintNamespaceResponse.transaction?.gasUsed}</p>
-                <p>Gas Price: {mintNamespaceResponse.transaction?.gasPrice}</p>
-                <p>Cumulative Gas Used: {mintNamespaceResponse.transaction?.cumulativeGasUsed}</p>
-                <p>Contract Address: {mintNamespaceResponse.transaction?.contractAddress}</p>
-              </pre>
-            ) : null}
+          <CollapsibleSection title="Details">
+            <ProgressTracker progress={progress} />
           </CollapsibleSection>
         </div>
       ) : null}
