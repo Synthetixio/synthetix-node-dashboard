@@ -84,6 +84,9 @@ tbody td {
 
 pre {
   background-color: transparent;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .simple-border {
@@ -111,4 +114,62 @@ pre {
 
 .projects-list li:not(:last-child) {
   margin-bottom: 60px;
+}
+
+.progress-tracker {
+  border-radius: 4px;
+  background-color: #06061b;
+  line-height: 1.5;
+  font-size: 12px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: rgba(21, 160, 190, 0.1);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.step:last-child {
+  margin-bottom: 0;
+}
+
+.step-text {
+  flex-grow: 1;
+  margin-right: 0.5rem;
+}
+
+.step.loading {
+  border-left: 4px solid #15a0be;
+}
+
+.step.success {
+  border-left: 4px solid #15a0be;
+  background-color: rgba(21, 160, 190, 0.15);
+}
+
+.step.error {
+  border-left: 4px solid #d32f2f;
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.loading-spinner {
+  font-weight: bold;
+  color: #15a0be;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
