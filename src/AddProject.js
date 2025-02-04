@@ -1,6 +1,6 @@
 import React from 'react';
 import CollapsibleSection from './CollapsibleSection';
-import ProgressTracker from './ProgressTracker';
+import { ProgressTracker } from './ProgressTracker';
 import { useKeyGen } from './useKeyGen';
 import { useMintNamespace } from './useMintNamespace';
 import { useUniqueGeneratedKey } from './useUniqueGeneratedKey';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ProgressTracker({ progress }) {
+export function ProgressTracker({ progress }) {
   return (
     <div className="progress-tracker">
       {progress.map((step, index) => {

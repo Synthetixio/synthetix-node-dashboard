@@ -10,7 +10,13 @@ import { SynthetixProvider, useSynthetix } from './useSynthetix';
 import { restoreToken } from './utils';
 import './main.css';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function WalletWatcher({ children }) {
   const [, updateSynthetix] = useSynthetix();
