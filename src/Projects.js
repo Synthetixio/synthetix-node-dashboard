@@ -29,7 +29,7 @@ export function Projects() {
       ) : (
         <>
           {generatedKeys.data.keys.length === 0 ? (
-            <p>No generatedKeys found.</p>
+            <p>No projects found.</p>
           ) : (
             <ul className="projects-list mt-6">
               {generatedKeys.data.keys.map(({ key, id, ipfs, published }) => {
