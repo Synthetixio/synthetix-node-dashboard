@@ -1,4 +1,4 @@
-### This documentation is a step-by-step guide on how to upload and publish a DApp project at a low level using the terminal.
+### This guide provides step-by-step instructions to upload and publish a DApp project using the command line.
 
 ## Prerequisites
 
@@ -86,3 +86,29 @@ curl -s -X POST "${API_URL}api/v0/dag/import?pin-roots=true" \
 ```
 
 Ensure the `car_files` directory contains the CAR file generated in the previous step.
+
+## Step 8 (Optional): Fetch the DAG
+
+Fetch the DAG content:
+
+```bash
+curl -s -X POST "${API_URL}api/v0/dag/get?arg=<PASTE_ROOT_CID_HERE>" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
+  -H "Content-Type: application/json" | jq
+```
+
+**Note:** Replace `<PASTE_ROOT_CID_HERE>` with the actual Root CID (retrieved from the response of the `dag/import` step).
+
+## Step 9: Publish Name with Root CID
+
+Publish the name linked to the Root CID:
+
+```bash
+curl -s -X POST "${API_URL}api/v0/name/publish?key=<PASTE_KEY_NAME_HERE>&arg=/ipfs/<PASTE_ROOT_CID_HERE>&ttl=10s" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
+  -H "Content-Type: application/json" | jq
+```
+
+### Notes:
+- Replace `<PASTE_KEY_NAME_HERE>` with the key name from the `key/gen` step (e.g., `nebula-forge`).
+- Replace `<PASTE_ROOT_CID_HERE>` with the Root CID from the `dag/import` step.
