@@ -14,6 +14,13 @@
 
 2. Ensure that **Node.js**, **Foundry**, **jq**, and **curl** are preinstalled.
 
+## Namespace Validation Requirements
+
+Your `NAMESPACE` must meet the following requirements:
+- Contain only lowercase letters, numbers, dashes (`-`), or underscores (`_`).
+- Be between **3 and 30 characters** long.
+- Not start or end with a dash (`-`) or an underscore (`_`).
+
 ## Step 1: Check Unique Namespace
 
 To ensure your namespace is unique, execute the following command in the terminal:
