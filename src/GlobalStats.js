@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
+function formatVersion(version) {
+  const match = version.match(/(.+?\+)(.{4}).*(.{4})$/);
+  return match ? `${match[1]}${match[2]}...${match[3]}` : version;
+}
+
 const useFetchApi = () => {
   return useQuery({
     queryKey: ['apiData'],
@@ -82,13 +87,15 @@ export function GlobalStats() {
               <tr>
                 <th>ID</th>
                 <th>Version</th>
+                <th>Location</th>
               </tr>
             </thead>
             <tbody>
               {data?.peers?.map((peer) => (
                 <tr key={peer.id}>
                   <td>{peer.id}</td>
-                  <td>{peer.version}</td>
+                  <td>{formatVersion(peer.version)}</td>
+                  <td>{peer.location}</td>
                 </tr>
               ))}
             </tbody>
