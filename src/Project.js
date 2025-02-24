@@ -88,9 +88,9 @@ export function Project() {
       const formData = new FormData();
       formData.append('file', carBlob);
 
-      dagImportMutation.mutate(formData);
+      dagImportMutation.mutate({ formData, key: params.name });
     }
-  }, [rootCID, carBlob, dagImportMutation.mutate]);
+  }, [rootCID, carBlob, params.name, dagImportMutation.mutate]);
 
   const handleKeyRemoval = () => {
     keyRemoveMutation.mutate(params.name, {
