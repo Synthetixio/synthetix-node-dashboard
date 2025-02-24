@@ -6,11 +6,11 @@ export function useDagImport() {
   const [synthetix] = useSynthetix();
 
   return useMutation({
-    mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}api/v0/dag/import?pin-roots=true`, {
+    mutationFn: async ({ formData, key }) => {
+      const response = await fetch(`${getApiUrl()}api/v0/dag/import?pin-roots=true&key=${key}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${synthetix.token}` },
-        body: data,
+        body: formData,
       });
       if (!response.ok) {
         throw new Error('DAG upload failed');
