@@ -1,15 +1,18 @@
 import { CarWriter } from '@ipld/car/writer';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import CollapsibleSection from './CollapsibleSection';
 import { KeyRemovalConfirmationModal } from './KeyRemovalConfirmationModal';
 import { ProgressTracker } from './ProgressTracker';
+import { useCids } from './useCids';
 import { useDagGet } from './useDagGet';
 import { useDagImport } from './useDagImport';
 import { useHelia } from './useHelia';
 import { useKeyRemove } from './useKeyRemove';
 import { useNamePublish } from './useNamePublish';
+import { useRemoveCid } from './useRemoveCid';
 import { useParams } from './useRoutes';
+import { useSynthetix } from './useSynthetix';
 import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
 import { getApiUrl } from './utils';
 
@@ -20,6 +23,10 @@ export function Project() {
   const [carBlob, setCarBlob] = useState(null);
   const [rootCID, setRootCID] = useState(null);
   const [fileUploadError, setFileUploadError] = useState(null);
+  const queryClient = useQueryClient();
+  const [synthetix] = useSynthetix();
+  const [currentRemovingCid, setCurrentRemovingCid] = useState(null);
+  const [currentDagGetCid, setCurrentDagGetCid] = useState({ cidLoading: null, cidDag: null });
 
   const handleFolderUpload = useCallback((e) => {
     const filesToUpload = [...e.target.files];
@@ -35,12 +42,17 @@ export function Project() {
 
     setFileUploadError(null);
     setFiles(filesToUpload);
+
+    e.target.value = '';
   }, []);
 
   const dagImportMutation = useDagImport();
   const dagGetMutation = useDagGet();
+  const dagGetCidListMutation = useDagGet();
   const namePublishMutation = useNamePublish();
   const keyRemoveMutation = useKeyRemove();
+  const cids = useCids();
+  const removeCidMutation = useRemoveCid();
 
   const carBlobFolderQuery = useQuery({
     enabled: fs !== null && heliaCar !== null && files.length > 0,
@@ -88,9 +100,25 @@ export function Project() {
       const formData = new FormData();
       formData.append('file', carBlob);
 
-      dagImportMutation.mutate({ formData, key: params.name });
+      dagImportMutation.mutate(
+        { formData, key: params.name },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: [synthetix.chainId, 'useCids', params.name],
+            });
+          },
+        }
+      );
     }
-  }, [rootCID, carBlob, params.name, dagImportMutation.mutate]);
+  }, [
+    rootCID,
+    carBlob,
+    params.name,
+    dagImportMutation.mutate,
+    queryClient.invalidateQueries,
+    synthetix.chainId,
+  ]);
 
   const handleKeyRemoval = () => {
     keyRemoveMutation.mutate(params.name, {
@@ -297,6 +325,117 @@ export function Project() {
         <div className="mt-6">
           <CollapsibleSection title="Remove Project Details">
             <ProgressTracker progress={removeProjectProgress} />
+          </CollapsibleSection>
+        </div>
+      ) : null}
+
+      <div className="mt-6 pb-6">
+        <p>
+          CIDs for Key <strong>{params.name}</strong>
+        </p>
+        {cids.isPending ? (
+          'Cids loading...'
+        ) : (
+          <>
+            {cids.isError ? (
+              <div> An error occurred: {cids.error?.message || 'Unknown error occurred.'}</div>
+            ) : null}
+
+            {cids.isSuccess ? (
+              <>
+                {cids.data?.cids?.length > 0 ? (
+                  <ul>
+                    {cids.data?.cids?.map((cid) => (
+                      <li
+                        key={cid}
+                        className="is-flex is-justify-content-space-between is-align-items-center is-gap-1.5 mt-4"
+                      >
+                        <code>{cid}</code>
+                        {cid === rootCID?.toString() ? (
+                          <p>
+                            <em>(uploaded)</em>
+                          </p>
+                        ) : null}
+                        <div className="buttons">
+                          <button
+                            type="button"
+                            className={`button is-small ${
+                              currentDagGetCid.cidLoading === cid ? 'is-loading' : ''
+                            }`}
+                            onClick={() => {
+                              setCurrentDagGetCid(() => ({ cidLoading: cid, cidDag: null }));
+                              dagGetCidListMutation.mutate(cid, {
+                                onSuccess: () => {
+                                  setCurrentDagGetCid(() => ({ cidLoading: null, cidDag: cid }));
+                                },
+                                onError: () => {
+                                  setCurrentDagGetCid(() => ({ cidLoading: null, cidDag: null }));
+                                },
+                              });
+                            }}
+                          >
+                            Get DAG Object
+                          </button>
+                          <button
+                            type="button"
+                            className={`button is-small ${
+                              currentRemovingCid === cid ? 'is-loading' : ''
+                            }`}
+                            disabled={!params.name}
+                            onClick={() => {
+                              setCurrentRemovingCid(cid);
+                              removeCidMutation.mutate(
+                                { cid, key: params.name },
+                                {
+                                  onSuccess: (data) => {
+                                    queryClient.invalidateQueries({
+                                      queryKey: [synthetix.chainId, 'useCids', params.name],
+                                    });
+
+                                    if (data.cid === rootCID?.toString()) {
+                                      setRootCID(null);
+                                      setCarBlob(null);
+                                      setFiles([]);
+                                    }
+                                    setCurrentRemovingCid(null);
+                                  },
+                                  onError: () => {
+                                    setCurrentRemovingCid(null);
+                                  },
+                                }
+                              );
+                            }}
+                          >
+                            Delete CID
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Data has not been uploaded yet</p>
+                )}
+              </>
+            ) : null}
+          </>
+        )}
+      </div>
+      {dagGetCidListMutation.status !== 'idle' && cids.data?.cids?.length > 0 ? (
+        <div className="mt-6">
+          <CollapsibleSection title="Get a DAG node from IPFS.">
+            <ProgressTracker
+              progress={[
+                {
+                  id: 'dag_get',
+                  text: 'Fetching DAG node from IPFS...',
+                  status: dagGetCidListMutation.status,
+                  errorMessage: dagGetCidListMutation.error?.message || 'Unknown error occurred.',
+                  response: dagGetCidListMutation.isSuccess ? dagGetCidListMutation.data : null,
+                  requestUrl: `${getApiUrl()}api/v0/dag/get?arg=${currentDagGetCid.cidDag}`,
+                  kuboCli: `ipfs dag get ${currentDagGetCid.cidDag}`,
+                },
+              ]}
+            />
           </CollapsibleSection>
         </div>
       ) : null}
