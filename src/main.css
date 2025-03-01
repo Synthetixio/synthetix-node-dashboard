@@ -6,6 +6,9 @@
   --bulma-body-color: #ffffff;
   --bulma-arrow-color: #15a0be;
   --bulma-code: #ffffff;
+
+  --bulma-primary-h: 191deg !important;
+  --bulma-primary-s: 80% !important;
 }
 
 html {
@@ -16,8 +19,8 @@ html {
 }
 
 header {
-  border-bottom: 1px solid #303037;
   height: 70px;
+  border-bottom: 1px solid #303037;
 }
 
 .card {
@@ -38,6 +41,7 @@ a.project-name:hover {
 }
 
 .background {
+  height: calc(100vh - 70px);
   background-image: repeating-linear-gradient(
     135deg,
     rgba(48, 48, 55, 0.2) 0px,
@@ -46,15 +50,14 @@ a.project-name:hover {
     transparent 50%
   );
   background-size: 8px 8px;
-  height: calc(100vh - 70px);
 }
 
 .button,
 .file-cta {
-  background-color: #15a0be;
-  color: #ffffff;
-  font-size: 16px;
-  padding: 4px 10px;
+  /*font-size: 16px;*/
+  /*padding: 4px 10px;*/
+  /*color: #ffffff;*/
+  /*background-color: #15a0be;*/
 }
 
 table {
@@ -78,14 +81,14 @@ tbody td {
 }
 
 .input:focus-within {
-  box-shadow: none;
   border-color: #15a0be;
+  box-shadow: none;
 }
 
 pre {
-  background-color: transparent;
   white-space: pre-wrap;
   word-wrap: break-word;
+  background-color: transparent;
   overflow-wrap: break-word;
 }
 
@@ -117,10 +120,10 @@ pre {
 }
 
 .progress-tracker {
+  font-size: 12px;
+  line-height: 1.5;
   border-radius: 4px;
   background-color: #06061b;
-  line-height: 1.5;
-  font-size: 12px;
 }
 
 .step {
@@ -128,10 +131,10 @@ pre {
   flex-direction: column;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
-  border-radius: 4px;
-  background-color: rgba(21, 160, 190, 0.1);
   white-space: pre-wrap;
   word-wrap: break-word;
+  border-radius: 4px;
+  background-color: rgba(21, 160, 190, 0.1);
   overflow-wrap: break-word;
 }
 
@@ -160,8 +163,8 @@ pre {
 
 .loading-spinner {
   font-weight: bold;
-  color: #15a0be;
   animation: blink 1s infinite;
+  color: #15a0be;
 }
 
 @keyframes blink {
@@ -172,4 +175,17 @@ pre {
   50% {
     opacity: 0.5;
   }
+}
+
+code.token {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 0.5rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #fff;
+  border-radius: 4px;
+  background-color: #06061b;
+  overflow-wrap: break-word;
 }

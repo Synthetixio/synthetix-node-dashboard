@@ -87,7 +87,8 @@ function Routes() {
         );
       case params.page === 'projects':
         return (
-          <ProtectedRoute isPending={isPending}
+          <ProtectedRoute
+            isPending={isPending}
             isAllowed={isUserAuthenticatedAndGranted}
             goTo={setParams}
             redirectPath="registration"
@@ -99,7 +100,8 @@ function Routes() {
         );
       case params.page === 'add-project':
         return (
-          <ProtectedRoute isPending={isPending}
+          <ProtectedRoute
+            isPending={isPending}
             isAllowed={isUserAuthenticatedAndGranted}
             goTo={setParams}
             redirectPath="registration"
@@ -111,7 +113,8 @@ function Routes() {
         );
       case params.page === 'project':
         return (
-          <ProtectedRoute isPending={isPending}
+          <ProtectedRoute
+            isPending={isPending}
             isAllowed={isUserAuthenticatedAndGranted}
             goTo={setParams}
             redirectPath="registration"
@@ -125,7 +128,7 @@ function Routes() {
         );
       case params.page === 'refresh-api-key':
         return (
-          <ProtectedRoute  isPending={isPending} isAllowed={isUserAuthenticated} goTo={setParams}>
+          <ProtectedRoute isPending={isPending} isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
               <RefreshApiKey />
             </React.Suspense>
@@ -133,7 +136,11 @@ function Routes() {
         );
       case params.page === 'admin':
         return (
-          <ProtectedRoute isPending={isPending} isAllowed={isUserAuthenticatedAndAdmin} goTo={setParams}>
+          <ProtectedRoute
+            isPending={isPending}
+            isAllowed={isUserAuthenticatedAndAdmin}
+            goTo={setParams}
+          >
             <React.Suspense fallback={null}>
               <Admin />
             </React.Suspense>

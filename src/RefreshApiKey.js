@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl, saveToken } from './utils';
 
@@ -27,30 +28,49 @@ export function RefreshApiKey() {
     },
   });
 
+  const [isCopied, setIsCopied] = useState(false);
+
   return (
-    <div className="has-text-centered">
-      {refreshTokenMutation.isPending ? (
-        'Refreshing...'
-      ) : (
-        <>
-          {refreshTokenMutation.isError ? (
-            <p>An error occurred: {refreshTokenMutation.error.message || 'Unknown error'}</p>
-          ) : null}
-
-          {refreshTokenMutation.isSuccess ? <p>Token successfully refreshed!</p> : null}
-
+    <div>
+      <div className="is-flex is-align-items-center">
+        <code className="token">{token}</code>
+        <div style={{ marginLeft: '10px' }}>
           <button
             type="button"
-            className="button is-small"
-            disabled={refreshTokenMutation.isPending}
+            className="button is-primary"
+            disabled={isCopied}
+            style={{ width: '100px' }}
             onClick={() => {
-              refreshTokenMutation.mutate({ walletAddress });
+              navigator.clipboard.writeText(token);
+              setIsCopied(true);
+              setTimeout(() => {
+                setIsCopied(false);
+              }, 500);
             }}
           >
-            Refresh token
+            {isCopied ? 'Copied!' : 'Copy'}
           </button>
-        </>
-      )}
+        </div>
+      </div>
+
+      <div className="buttons" style={{ marginTop: '10px' }}>
+        <button
+          type="button"
+          className="button is-primary"
+          disabled={refreshTokenMutation.isPending}
+          onClick={() => {
+            refreshTokenMutation.mutate({ walletAddress });
+          }}
+        >
+          {refreshTokenMutation.isPending ? 'Regenerating...' : 'Regenerate token'}
+        </button>
+      </div>
+
+      {refreshTokenMutation.isError ? (
+        <p>An error occurred: {refreshTokenMutation.error.message || 'Unknown error'}</p>
+      ) : null}
+
+      {refreshTokenMutation.isSuccess ? <p>Token successfully refreshed!</p> : null}
     </div>
   );
 }

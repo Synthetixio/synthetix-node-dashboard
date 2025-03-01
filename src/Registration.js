@@ -26,7 +26,7 @@ export function Registration() {
           <h4 className="title is-4">Please wait for approval</h4>
           <button
             type="button"
-            className="button is-small"
+            className="button is-primary"
             onClick={() => withdrawApplicationMutation.mutate()}
           >
             Renounce assigned role
@@ -40,7 +40,7 @@ export function Registration() {
           <h4 className="title is-4">Access control</h4>
           <button
             type="button"
-            className="button is-small"
+            className="button is-primary"
             onClick={() => submitApplicationMutation.mutate()}
           >
             Apply for whitelist

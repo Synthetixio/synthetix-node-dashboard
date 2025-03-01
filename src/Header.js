@@ -74,47 +74,38 @@ export function Header() {
 
           <div className="navbar-end">
             <div className="navbar-item">
-              <div className="buttons">
-                {isUserAuthenticatedAndAdmin ? (
+              <div className="buttons" style={{ gap: '1.5em' }}>
+                {isUserAuthenticatedAndGranted ? (
                   <Link
-                    to={`?${makeSearch({ page: 'admin' })}`}
-                    onClick={() => setParams({ page: 'admin' })}
-                    className="button is-small"
+                    to={`?${makeSearch({ page: 'projects' })}`}
+                    onClick={() => setParams({ page: 'projects' })}
                   >
-                    Admin
+                    Projects
                   </Link>
                 ) : null}
+
                 {isUserAuthenticated ? (
                   <>
                     <Link
                       to={`?${makeSearch({ page: 'refresh-api-key' })}`}
                       onClick={() => setParams({ page: 'refresh-api-key' })}
-                      className="button is-small"
                     >
-                      Refresh Api Key
+                      API Key
                     </Link>
                   </>
                 ) : null}
-                {isUserAuthenticatedAndGranted ? (
+
+                {isUserAuthenticatedAndAdmin ? (
                   <Link
-                    to={`?${makeSearch({ page: 'projects' })}`}
-                    onClick={() => setParams({ page: 'projects' })}
-                    className="button is-small"
+                    to={`?${makeSearch({ page: 'admin' })}`}
+                    onClick={() => setParams({ page: 'admin' })}
                   >
-                    Projects
+                    Admin
                   </Link>
                 ) : null}
-                <a
-                  className="button is-small"
-                  href="https://github.com/synthetixio/synthetix-node"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Run a Node
-                </a>
 
                 {walletAddress && token ? (
-                  <button type="button" className="button is-small" onClick={logout}>
+                  <button type="button" className="link" onClick={logout}>
                     Log Out
                   </button>
                 ) : null}

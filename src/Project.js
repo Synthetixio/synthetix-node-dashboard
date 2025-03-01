@@ -208,7 +208,7 @@ export function Project() {
         </div>
         <button
           type="button"
-          className="button is-small"
+          className="button is-primary"
           disabled={!params.name}
           onClick={() => setIsModalOpen(true)}
         >
@@ -247,7 +247,7 @@ export function Project() {
               </div>
               <button
                 type="button"
-                className={`button is-small ${namePublishMutation.isPending ? 'is-loading' : ''}`}
+                className={`button is-primary ${namePublishMutation.isPending ? 'is-loading' : ''}`}
                 disabled={!params.name}
                 onClick={() => {
                   namePublishMutation.mutate({ keyName: params.name, rootCID });
@@ -299,7 +299,7 @@ export function Project() {
             <div className="buttons">
               <button
                 type="button"
-                className={`button is-small ${carBlobFolderQuery.isPending ? 'is-loading' : ''}`}
+                className={`button is-primary ${carBlobFolderQuery.isPending ? 'is-loading' : ''}`}
                 disabled={!carBlob}
                 onClick={() => downloadCarFile(carBlob)}
               >
@@ -307,7 +307,7 @@ export function Project() {
               </button>
               <button
                 type="button"
-                className={`button is-small ${dagGetMutation.isPending ? 'is-loading' : ''}`}
+                className={`button is-primary ${dagGetMutation.isPending ? 'is-loading' : ''}`}
                 disabled={!dagImportMutation.data || dagGetMutation.isPending}
                 onClick={() => {
                   dagGetMutation.mutate(dagImportMutation.data?.Root.Cid['/']);
@@ -359,7 +359,7 @@ export function Project() {
                         <div className="buttons">
                           <button
                             type="button"
-                            className={`button is-small ${
+                            className={`button is-primary ${
                               currentDagGetCid.cidLoading === cid ? 'is-loading' : ''
                             }`}
                             onClick={() => {
@@ -378,7 +378,7 @@ export function Project() {
                           </button>
                           <button
                             type="button"
-                            className={`button is-small ${
+                            className={`button is-primary ${
                               currentRemovingCid === cid ? 'is-loading' : ''
                             }`}
                             disabled={!params.name}

@@ -96,7 +96,7 @@ export function Admin() {
             <div className="control">
               <input
                 id="approveWalletAddress"
-                className={`input ${userApproveWalletError && 'is-danger'} is-small`}
+                className={`input ${userApproveWalletError && 'is-danger'} is-primary`}
                 type="text"
                 placeholder="Enter wallet address"
                 onChange={(e) => {
@@ -111,7 +111,7 @@ export function Admin() {
           </div>
           <button
             type="submit"
-            className="button is-small"
+            className="button is-primary"
             disabled={!userApproveWallet || userApproveWalletError}
           >
             Submit
@@ -135,7 +135,7 @@ export function Admin() {
             <div className="control">
               <input
                 id="revokeWalletAddress"
-                className={`input ${userRevokeWalletError && 'is-danger'} is-small`}
+                className={`input ${userRevokeWalletError && 'is-danger'} is-primary`}
                 type="text"
                 placeholder="Enter wallet address"
                 onChange={(e) => {
@@ -150,7 +150,7 @@ export function Admin() {
           </div>
           <button
             type="submit"
-            className="button is-small"
+            className="button is-primary"
             disabled={!userRejectWallet || userRevokeWalletError}
           >
             Submit

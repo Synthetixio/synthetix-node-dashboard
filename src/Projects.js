@@ -14,7 +14,7 @@ export function Projects() {
         <Link
           to={`?${makeSearch({ page: 'add-project' })}`}
           onClick={() => setParams({ page: 'add-project' })}
-          className="button is-small"
+          className="button is-primary"
         >
           Add Project
         </Link>

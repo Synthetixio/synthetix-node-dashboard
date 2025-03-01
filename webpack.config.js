@@ -69,10 +69,8 @@ const cssRule = {
 };
 
 const extractPlugin = new MiniCssExtractPlugin({
-  filename: isProd ? '[name].[contenthash:8].css' : '[name].css'
+  filename: isProd ? '[name].[contenthash:8].css' : '[name].css',
 });
-
-
 
 const devServer = {
   port: process.env.NODE_PORT || '3001',

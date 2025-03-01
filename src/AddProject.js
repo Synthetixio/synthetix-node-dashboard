@@ -1,10 +1,12 @@
 import { ethers } from 'ethers';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import CollapsibleSection from './CollapsibleSection';
 import { ProgressTracker } from './ProgressTracker';
 import { importNamespace } from './importNamespace';
 import { useKeyGen } from './useKeyGen';
 import { useMintNamespace } from './useMintNamespace';
+import { makeSearch, useParams } from './useRoutes';
 import { useSynthetix } from './useSynthetix';
 import { useUniqueGeneratedKey } from './useUniqueGeneratedKey';
 import { useUniqueNamespaceCheck } from './useUniqueNamespaceCheck';
@@ -12,6 +14,8 @@ import { getApiUrl } from './utils';
 import { validateNamespace } from './validateNamespace';
 
 export function AddProject() {
+  const [, setParams] = useParams();
+
   const [synthetix] = useSynthetix();
   const mintNamespaceMutation = useMintNamespace();
   const keyGenMutation = useKeyGen();
@@ -153,7 +157,7 @@ export function AddProject() {
         <div className="field">
           <div className="control">
             <input
-              className={`input ${validationErrors.length > 0 ? 'is-danger' : ''} is-small`}
+              className={`input ${validationErrors.length > 0 ? 'is-danger' : ''} is-primary`}
               type="text"
               placeholder="Enter project name"
               value={namespace}
@@ -170,25 +174,42 @@ export function AddProject() {
             </p>
           ))}
         </div>
-        <button
-          type="submit"
-          className={`button is-small ${isMutating ? 'is-loading' : ''}`}
-          disabled={!namespace.trim() || isMutating || validationErrors.length > 0}
-        >
-          Save
-        </button>
+        {keyGenMutation.isSuccess ? (
+          <article className="message is-success">
+            <p>Project {namespace} created</p>
+          </article>
+        ) : null}
+
+        <div className="buttons">
+          {keyGenMutation.isSuccess ? (
+            <Link
+              to={`?${makeSearch({ page: 'project', name: namespace })}`}
+              onClick={() => setParams({ page: 'project', name: namespace })}
+              className="button is-success"
+            >
+              Continue to the project page
+            </Link>
+          ) : null}
+          {keyGenMutation.isIdle ? (
+            <button
+              type="submit"
+              className={`button is-primary ${isMutating ? 'is-loading' : ''}`}
+              disabled={!namespace.trim() || isMutating || validationErrors.length > 0}
+            >
+              Save
+            </button>
+          ) : null}
+          {keyGenMutation.isError ? (
+            <button
+              type="button"
+              className="button is-primary"
+              onClick={() => keyGenMutation.mutate(namespace)}
+            >
+              Retry Key Generation
+            </button>
+          ) : null}
+        </div>
       </form>
-
-      {keyGenMutation.isError ? (
-        <button
-          type="button"
-          className="button is-small"
-          onClick={() => keyGenMutation.mutate(namespace)}
-        >
-          Retry Key Generation
-        </button>
-      ) : null}
-
       {hasProgress ? (
         <div className="mt-6">
           <CollapsibleSection title="Details">
