@@ -90,9 +90,12 @@ export function Admin() {
       <section className="section">
         <form className="mb-4" onSubmit={handleApproveApplicationSubmit}>
           <div className="field">
-            <label className="label">Approve application</label>
+            <label className="label" htmlFor="approveWalletAddress">
+              Approve application
+            </label>
             <div className="control">
               <input
+                id="approveWalletAddress"
                 className={`input ${userApproveWalletError && 'is-danger'} is-small`}
                 type="text"
                 placeholder="Enter wallet address"
@@ -126,9 +129,12 @@ export function Admin() {
       <section className="section">
         <form className="mb-4" onSubmit={handleRejectApplicationSubmit}>
           <div className="field">
-            <label className="label">Revoke access</label>
+            <label className="label" htmlFor="revokeWalletAddress">
+              Revoke access
+            </label>
             <div className="control">
               <input
+                id="revokeWalletAddress"
                 className={`input ${userRevokeWalletError && 'is-danger'} is-small`}
                 type="text"
                 placeholder="Enter wallet address"

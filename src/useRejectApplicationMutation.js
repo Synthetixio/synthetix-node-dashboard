@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { abi, address } from '@vderunov/whitelist-contract/deployments/11155420/Whitelist';
 import { Contract } from 'ethers';
+import { importWhitelist } from './importWhitelist';
 import { useSynthetix } from './useSynthetix';
 
 export function useRejectApplicationMutation() {
@@ -9,8 +9,9 @@ export function useRejectApplicationMutation() {
 
   return useMutation({
     mutationFn: async (wallet) => {
-      const contract = new Contract(address, abi, synthetix.signer);
-      const tx = await contract.rejectApplication(wallet);
+      const { address, abi } = await importWhitelist({ chainId: synthetix.chainId });
+      const WhitelistContract = new Contract(address, abi, synthetix.signer);
+      const tx = await WhitelistContract.rejectApplication(wallet);
       await tx.wait();
 
       queryClient.invalidateQueries({

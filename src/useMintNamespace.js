@@ -13,7 +13,7 @@ export function useMintNamespace() {
       if (!(provider && signer && chainId && walletAddress)) {
         throw new Error('Not ready');
       }
-      const Namespace = await importNamespace({ chainId: Number.parseInt(chainId, 16) });
+      const Namespace = await importNamespace({ chainId });
       const NamespaceContract = new Contract(Namespace.address, Namespace.abi, signer);
 
       try {

@@ -51,6 +51,8 @@ export function Header() {
     },
   });
 
+  const isChainSupported = `0x${Number(11155420).toString(16)}` === `${synthetix.chainId}`;
+
   return (
     <header>
       <nav className="navbar" aria-label="main navigation">
@@ -110,13 +112,31 @@ export function Header() {
                 >
                   Run a Node
                 </a>
+
                 {walletAddress && token ? (
                   <button type="button" className="button is-small" onClick={logout}>
                     Log Out
                   </button>
                 ) : null}
 
-                {walletAddress && !token ? (
+                {!isChainSupported && walletAddress && !token ? (
+                  <>
+                    <button
+                      type="button"
+                      className="button is-small"
+                      onClick={() => {
+                        window.ethereum?.request({
+                          method: 'wallet_switchEthereumChain',
+                          params: [{ chainId: `0x${Number(11155420).toString(16)}` }],
+                        });
+                      }}
+                    >
+                      Switch to Supported Network
+                    </button>
+                  </>
+                ) : null}
+
+                {isChainSupported && walletAddress && !token ? (
                   <>
                     <button
                       type="button"

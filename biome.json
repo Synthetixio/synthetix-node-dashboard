@@ -1,5 +1,9 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "ignore": ["package.json", ".yarnrc.yml", "yarn.lock", "cache", ".yarn", "node_modules", "out"],
+    "ignoreUnknown": true
+  },
   "organizeImports": {
     "enabled": true
   },
@@ -7,16 +11,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
       "correctness": {
         "noUndeclaredVariables": "error",
         "noUnusedVariables": "error"
-      },
-      "suspicious": { "noArrayIndexKey": "off" },
-      "a11y": {
-        "noLabelWithoutControl": "off"
       }
     }
   },

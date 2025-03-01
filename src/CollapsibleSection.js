@@ -19,7 +19,9 @@ function CollapsibleSection({ title, children }) {
         className="button-collapse"
       >
         {title}
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
         <i className="icon close" dangerouslySetInnerHTML={{ __html: CloseIcon }} />
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
         <i className="icon open" dangerouslySetInnerHTML={{ __html: ChevronDownIcon }} />
       </button>
 

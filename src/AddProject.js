@@ -133,8 +133,8 @@ export function AddProject() {
               }}
             />
           </div>
-          {validationErrors.map((error, index) => (
-            <p key={index} className="help is-danger">
+          {validationErrors.map((error) => (
+            <p key={error} className="help is-danger">
               {error}
             </p>
           ))}

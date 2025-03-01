@@ -2433,13 +2433,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^5.0.2":
-  version: 5.2.0
-  resolution: "@openzeppelin/contracts@npm:5.2.0"
-  checksum: 10/d77e1bdfca6fa1c40b5a32bb92220ec633ef86cc0bf43a011ad218c26c9e763c70ace3fc1e148a0462394a3aed8c5d7445935ebfeb146ba1454abec66625e420
-  languageName: node
-  linkType: hard
-
 "@peculiar/asn1-cms@npm:^2.3.13, @peculiar/asn1-cms@npm:^2.3.15":
   version: 2.3.15
   resolution: "@peculiar/asn1-cms@npm:2.3.15"
@@ -2662,6 +2655,13 @@ __metadata:
   version: 3.1.0
   resolution: "@sindresorhus/fnv1a@npm:3.1.0"
   checksum: 10/9816f4382da21df562e9049bd40dca95bc952afbc5f2257750b1b537af0810850749ee113c8b97f0b4c49a2d82c225fc8e0e14fda191333de9e1f73730a428e3
+  languageName: node
+  linkType: hard
+
+"@synthetixio/synthetix-node-namespace@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@synthetixio/synthetix-node-namespace@npm:0.1.1"
+  checksum: 10/3a97735dce9707f27fdd9ecbca5ca2d4bbccce1252f7a28e25e4ef8ee47787fef14ad94cfd700fac31fbff352c840728456d23fda30a64dba441d3094b8caecf
   languageName: node
   linkType: hard
 
@@ -3001,17 +3001,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/21369beafa75c91ae3b00d3a2671c7408fceae1d492ca2abd5ac7c8c8bf4596d513c1599ebbddeae82c27c4a2d248976d0d714c4b3d34362b2ae35b964e2e637
-  languageName: node
-  linkType: hard
-
-"@vderunov/whitelist-contract@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@vderunov/whitelist-contract@npm:2.0.0"
-  dependencies:
-    "@openzeppelin/contracts": "npm:^5.0.2"
-    ethers: "npm:^6.11.1"
-    forge-std: "github:foundry-rs/forge-std#master"
-  checksum: 10/2de37c0c109e809cdecf76e70b06c2297914fd0ed849f505b7701a7814eb8338e4a861bb0a0c645cf208171f72bc676fa09f2d07c54f1d8a1733649b17c67d3e
   languageName: node
   linkType: hard
 
@@ -4105,9 +4094,9 @@ __metadata:
     "@helia/unixfs": "npm:^4.0.2"
     "@ipld/car": "npm:^5.4.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
+    "@synthetixio/synthetix-node-namespace": "npm:^0.1.1"
     "@tanstack/react-query": "npm:^5.66.0"
     "@tanstack/react-query-devtools": "npm:^5.66.0"
-    "@vderunov/whitelist-contract": "npm:^2.0.0"
     babel-loader: "npm:^9.2.1"
     bulma: "npm:^1.0.3"
     css-loader: "npm:^7.1.2"
@@ -4620,7 +4609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^6.11.1, ethers@npm:^6.13.5":
+"ethers@npm:^6.13.5":
   version: 6.13.5
   resolution: "ethers@npm:6.13.5"
   dependencies:
@@ -4862,13 +4851,6 @@ __metadata:
     cross-spawn: "npm:^7.0.0"
     signal-exit: "npm:^4.0.1"
   checksum: 10/e3a60480f3a09b12273ce2c5fcb9514d98dd0e528f58656a1b04680225f918d60a2f81f6a368f2f3b937fcee9cfc0cbf16f1ad9a0bc6a3a6e103a84c9a90087e
-  languageName: node
-  linkType: hard
-
-"forge-std@github:foundry-rs/forge-std#master":
-  version: 1.9.5
-  resolution: "forge-std@https://github.com/foundry-rs/forge-std.git#commit=726a6ee5fc8427a0013d6f624e486c9130c0e336"
-  checksum: 10/425c9b275b636f98712252cbf1b61b08cebb0a611d475e5046586f1ef80cfbc10c281c41fd141e8a0fdd6b53c8078e883f4829c466f2c77728f624fe78980423
   languageName: node
   linkType: hard
 
