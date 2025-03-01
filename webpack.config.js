@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const dotenv = require('dotenv');
+const TerserPlugin = require('terser-webpack-plugin');
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const isTest = process.env.NODE_ENV === 'test';
 
 const htmlPlugin = new HtmlWebpackPlugin({
   template: './index.html',
-  title: 'dash-frontend',
+  title: 'Synthetix Node Dashboard',
   favicon: './public/favicon.ico',
   scriptLoading: 'defer',
   minify: false,
@@ -20,39 +21,15 @@ const htmlPlugin = new HtmlWebpackPlugin({
   xhtml: true,
 });
 
-const devServer = {
-  port: process.env.NODE_PORT || '3001',
-
-  hot: !isTest,
-  liveReload: false,
-
-  historyApiFallback: true,
-
-  devMiddleware: {
-    writeToDisk: true,
-    publicPath: '',
-  },
-
-  client: {
-    logging: 'log',
-    overlay: false,
-    progress: false,
-  },
-
-  static: './public',
-
-  headers: { 'Access-Control-Allow-Origin': '*' },
-  allowedHosts: 'all',
-  open: false,
-  compress: false,
-};
-
 const babelRule = {
   test: /\.(js|jsx)$/,
   include: [
     // Only include code in the src to ensure that library functions do not need compilation
     /src/,
   ],
+  resolve: {
+    fullySpecified: false,
+  },
   use: {
     loader: require.resolve('babel-loader'),
     options: {
@@ -92,26 +69,69 @@ const cssRule = {
 };
 
 const extractPlugin = new MiniCssExtractPlugin({
-  filename: '[name].css',
+  filename: isProd ? '[name].[contenthash:8].css' : '[name].css'
 });
 
+
+
+const devServer = {
+  port: process.env.NODE_PORT || '3001',
+
+  hot: !isTest,
+  liveReload: false,
+
+  historyApiFallback: true,
+
+  devMiddleware: {
+    writeToDisk: !isTest,
+    publicPath: '',
+  },
+
+  client: {
+    logging: 'log',
+    overlay: false,
+    progress: false,
+  },
+
+  static: './public',
+
+  headers: { 'Access-Control-Allow-Origin': '*' },
+  allowedHosts: 'all',
+  open: false,
+  compress: false,
+};
+
 module.exports = {
-  devtool: isProd ? 'inline-source-map' : isTest ? false : 'source-map',
+  devtool: isTest ? false : 'source-map',
   devServer,
   mode: isProd ? 'production' : 'development',
   entry: './src/index.jsx',
-  optimization: {
-    moduleIds: 'named',
-    minimize: false,
-  },
 
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '',
-    filename: '[name].js',
-    chunkFilename: '[name].js',
+    filename: isProd ? '[name].[contenthash:8].js' : '[name].js',
+    chunkFilename: isProd ? 'chunk/[name].[contenthash:8].js' : '[name].js',
     assetModuleFilename: '[name].[contenthash:8][ext]',
     clean: true,
+  },
+
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: {
+      chunks: 'async',
+      maxAsyncRequests: 10,
+      maxInitialRequests: 10,
+      hidePathInfo: true,
+      automaticNameDelimiter: '--',
+      name: false,
+    },
+    moduleIds: isProd ? 'deterministic' : 'named',
+    chunkIds: isProd ? 'deterministic' : 'named',
+    minimize: isProd,
+    minimizer: [new TerserPlugin()],
+    innerGraph: true,
+    emitOnErrors: false,
   },
 
   plugins: [
