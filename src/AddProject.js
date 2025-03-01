@@ -1,14 +1,18 @@
+import { ethers } from 'ethers';
 import React from 'react';
 import CollapsibleSection from './CollapsibleSection';
 import { ProgressTracker } from './ProgressTracker';
+import { importNamespace } from './importNamespace';
 import { useKeyGen } from './useKeyGen';
 import { useMintNamespace } from './useMintNamespace';
+import { useSynthetix } from './useSynthetix';
 import { useUniqueGeneratedKey } from './useUniqueGeneratedKey';
 import { useUniqueNamespaceCheck } from './useUniqueNamespaceCheck';
 import { getApiUrl } from './utils';
 import { validateNamespace } from './validateNamespace';
 
 export function AddProject() {
+  const [synthetix] = useSynthetix();
   const mintNamespaceMutation = useMintNamespace();
   const keyGenMutation = useKeyGen();
   const uniqueNamespaceMutation = useUniqueNamespaceCheck();
@@ -16,6 +20,7 @@ export function AddProject() {
   const [namespace, setNamespace] = React.useState('');
   const [validationErrors, setValidationErrors] = React.useState([]);
   const [checks, setChecks] = React.useState(null);
+  const [shouldMint, setShouldMint] = React.useState(true);
 
   const handleSubmitNamespace = async (e) => {
     e.preventDefault();
@@ -52,11 +57,33 @@ export function AddProject() {
       return;
     }
 
-    mintNamespaceMutation.mutate(namespace, {
-      onSuccess: () => {
-        keyGenMutation.mutate(namespace);
-      },
-    });
+    const Namespace = await importNamespace({ chainId: synthetix.chainId });
+    const NamespaceContract = new ethers.Contract(
+      Namespace.address,
+      Namespace.abi,
+      synthetix.provider
+    );
+
+    let _shouldMint = true;
+    const tokenId = await NamespaceContract.namespaceToTokenId(namespace);
+    if (tokenId) {
+      const owner = await NamespaceContract.ownerOf(tokenId);
+      if (owner.toLowerCase() === synthetix.walletAddress.toLowerCase()) {
+        _shouldMint = false;
+      }
+    }
+
+    if (_shouldMint) {
+      setShouldMint(true);
+      mintNamespaceMutation.mutate(namespace, {
+        onSuccess: () => {
+          keyGenMutation.mutate(namespace);
+        },
+      });
+    } else {
+      setShouldMint(false);
+      keyGenMutation.mutate(namespace);
+    }
   };
 
   const progress = [
@@ -87,9 +114,13 @@ export function AddProject() {
     {
       id: 'mint_namespace',
       text: 'Minting namespace...',
-      status: mintNamespaceMutation.status,
+      status: shouldMint ? mintNamespaceMutation.status : 'success',
       errorMessage: mintNamespaceMutation.error?.message || 'Unknown error occurred.',
-      response: mintNamespaceMutation.isSuccess ? mintNamespaceMutation.data : null,
+      response: shouldMint
+        ? mintNamespaceMutation.isSuccess
+          ? mintNamespaceMutation.data
+          : null
+        : 'Token minted.',
       requestUrl: 'Executing safeMint on the contract.',
     },
     {
