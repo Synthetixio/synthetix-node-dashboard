@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { flag } from 'country-emoji';
 import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
-function formatVersion(version) {
-  const match = version.match(/(.+?\+)(.{4}).*(.{4})$/);
-  return match ? `${match[1]}${match[2]}...${match[3]}` : version;
+function formatVersion(fullVersion) {
+  const [version] = fullVersion.split('+');
+  return version;
 }
 
 const useFetchApi = () => {
@@ -87,7 +87,9 @@ export function GlobalStats() {
               <tr>
                 <th>&nbsp;</th>
                 <th>ID</th>
-                <th>Version</th>
+                <th className="has-text-right">Uptime (d)</th>
+                <th className="has-text-right">Uptime (m)</th>
+                <th className="has-text-right">Version</th>
               </tr>
             </thead>
             <tbody>
@@ -95,7 +97,9 @@ export function GlobalStats() {
                 <tr key={peer.id}>
                   <td>{flag(peer.country)}</td>
                   <td>{peer.peerId}</td>
-                  <td>{formatVersion(peer.version)}</td>
+                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%</td>
+                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%</td>
+                  <td className="has-text-right">{formatVersion(peer.version)}</td>
                 </tr>
               ))}
             </tbody>
