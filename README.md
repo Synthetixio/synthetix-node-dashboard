@@ -62,6 +62,9 @@ Click on the project name to manage it:
 2. IPFS will:
     - Automatically import the folder's contents.
     - Pin the data for distribution.
+3. A list of CIDs for this project:
+    - Delete CID.
+    - Retrieve data by CID.
 
 #### Publish
 After uploading:
