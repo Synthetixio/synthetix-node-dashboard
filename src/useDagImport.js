@@ -7,7 +7,7 @@ export function useDagImport() {
 
   return useMutation({
     mutationFn: async ({ formData, key }) => {
-      const response = await fetch(`${getApiUrl()}api/v0/dag/import?pin-roots=true&key=${key}`, {
+      const response = await fetch(`${getApiUrl()}/api/v0/dag/import?pin-roots=true&key=${key}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${synthetix.token}` },
         body: formData,

@@ -7,7 +7,7 @@ export function useRemoveCid() {
 
   return useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}remove-cid`, {
+      const response = await fetch(`${getApiUrl()}/api/remove-cid`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${synthetix.token}`,

@@ -9,7 +9,7 @@ export function useKeyRemove() {
 
   return useMutation({
     mutationFn: async (ipnsKey) => {
-      const response = await fetch(`${getApiUrl()}api/v0/key/rm?arg=${ipnsKey}`, {
+      const response = await fetch(`${getApiUrl()}/api/v0/key/rm?arg=${ipnsKey}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });

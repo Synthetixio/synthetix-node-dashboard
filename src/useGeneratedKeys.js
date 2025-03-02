@@ -10,7 +10,7 @@ export function useGeneratedKeys() {
     enabled: Boolean(chainId),
     queryKey: [chainId, 'useGeneratedKeys'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}generated-keys`, {
+      const response = await fetch(`${getApiUrl()}/api/generated-keys`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });

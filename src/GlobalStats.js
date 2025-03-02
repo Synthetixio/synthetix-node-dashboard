@@ -10,7 +10,7 @@ const useFetchApi = () => {
   return useQuery({
     queryKey: ['apiData'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}api`);
+      const response = await fetch(`${getApiUrl()}/api/api`);
       if (!response.ok) {
         throw new Error(`Request error: ${response.status}`);
       }

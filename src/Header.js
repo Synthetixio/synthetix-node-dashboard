@@ -8,7 +8,7 @@ import { useSynthetix } from './useSynthetix';
 import { getApiUrl, saveToken } from './utils';
 
 const makeUnauthenticatedRequest = async (endpoint, data) => {
-  const response = await fetch(`${getApiUrl()}${endpoint}`, {
+  const response = await fetch(`${getApiUrl()}/api/${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

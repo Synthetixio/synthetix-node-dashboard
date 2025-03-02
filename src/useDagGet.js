@@ -7,7 +7,7 @@ export function useDagGet() {
 
   return useMutation({
     mutationFn: async (rootCID) => {
-      const response = await fetch(`${getApiUrl()}api/v0/dag/get?arg=${rootCID}`, {
+      const response = await fetch(`${getApiUrl()}/api/v0/dag/get?arg=${rootCID}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${synthetix.token}` },
       });

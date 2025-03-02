@@ -7,7 +7,7 @@ export function useUniqueGeneratedKey() {
 
   return useMutation({
     mutationFn: async (key) => {
-      const response = await fetch(`${getApiUrl()}unique-generated-key`, {
+      const response = await fetch(`${getApiUrl()}/api/unique-generated-key`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${synthetix.token}`,

@@ -9,7 +9,7 @@ export function RefreshApiKey() {
 
   const refreshTokenMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}refresh-token`, {
+      const response = await fetch(`${getApiUrl()}/api/refresh-token`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

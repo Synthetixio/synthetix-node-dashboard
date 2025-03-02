@@ -7,7 +7,7 @@ export function useUniqueNamespaceCheck() {
 
   return useMutation({
     mutationFn: async (namespace) => {
-      const response = await fetch(`${getApiUrl()}unique-namespace`, {
+      const response = await fetch(`${getApiUrl()}/api/unique-namespace`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${synthetix.token}`,

@@ -146,7 +146,7 @@ export function Project() {
       status: dagImportMutation.status,
       errorMessage: dagImportMutation.error?.message || 'Unknown error occurred.',
       response: dagImportMutation.isSuccess ? dagImportMutation.data : null,
-      requestUrl: `${getApiUrl()}api/v0/dag/import?pin-roots=true`,
+      requestUrl: `${getApiUrl()}/api/v0/dag/import?pin-roots=true`,
       kuboCli: 'ipfs dag import --pin-roots=true <path_to_car_file>',
     },
     {
@@ -155,7 +155,7 @@ export function Project() {
       status: namePublishMutation.status,
       errorMessage: namePublishMutation.error?.message || 'Unknown error occurred.',
       response: namePublishMutation.isSuccess ? namePublishMutation.data : null,
-      requestUrl: `${getApiUrl()}api/v0/name/publish?key=${params.name}&arg=/ipfs/${rootCID}&ttl=10s`,
+      requestUrl: `${getApiUrl()}/api/v0/name/publish?key=${params.name}&arg=/ipfs/${rootCID}&ttl=10s`,
       kuboCli: `ipfs name publish --key=${params.name} --ttl=10s /ipfs/${rootCID}`,
     },
   ];
@@ -167,7 +167,7 @@ export function Project() {
       status: dagGetMutation.status,
       errorMessage: dagGetMutation.error?.message || 'Unknown error occurred.',
       response: dagGetMutation.isSuccess ? dagGetMutation.data : null,
-      requestUrl: `${getApiUrl()}api/v0/dag/get?arg=${rootCID}`,
+      requestUrl: `${getApiUrl()}/api/v0/dag/get?arg=${rootCID}`,
       kuboCli: `ipfs dag get ${rootCID}`,
     },
   ];
@@ -179,7 +179,7 @@ export function Project() {
       status: keyRemoveMutation.status,
       errorMessage: keyRemoveMutation.error?.message || 'Unknown error occurred.',
       response: keyRemoveMutation.isSuccess ? keyRemoveMutation.data : null,
-      requestUrl: `${getApiUrl()}api/v0/key/rm?arg=${params.name}`,
+      requestUrl: `${getApiUrl()}/api/v0/key/rm?arg=${params.name}`,
       kuboCli: `ipfs key rm ${params.name}`,
     },
   ];
@@ -431,7 +431,7 @@ export function Project() {
                   status: dagGetCidListMutation.status,
                   errorMessage: dagGetCidListMutation.error?.message || 'Unknown error occurred.',
                   response: dagGetCidListMutation.isSuccess ? dagGetCidListMutation.data : null,
-                  requestUrl: `${getApiUrl()}api/v0/dag/get?arg=${currentDagGetCid.cidDag}`,
+                  requestUrl: `${getApiUrl()}/api/v0/dag/get?arg=${currentDagGetCid.cidDag}`,
                   kuboCli: `ipfs dag get ${currentDagGetCid.cidDag}`,
                 },
               ]}

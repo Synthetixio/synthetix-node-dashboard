@@ -22,7 +22,7 @@ export function Admin() {
   const submittedWallets = useQuery({
     queryKey: [synthetix.chainId, 'submitted-wallets'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}submitted-wallets`, {
+      const response = await fetch(`${getApiUrl()}/api/submitted-wallets`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${synthetix.token}` },
       });
@@ -38,7 +38,7 @@ export function Admin() {
   const approvedWallets = useQuery({
     queryKey: [synthetix.chainId, 'approved-wallets'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}approved-wallets`, {
+      const response = await fetch(`${getApiUrl()}/api/approved-wallets`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${synthetix.token}` },
       });

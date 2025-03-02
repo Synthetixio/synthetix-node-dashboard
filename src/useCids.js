@@ -12,7 +12,7 @@ export function useCids() {
     enabled: Boolean(chainId && params.name),
     queryKey: [chainId, 'useCids', params.name],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}cids?key=${params.name}`, {
+      const response = await fetch(`${getApiUrl()}/api/cids?key=${params.name}`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });

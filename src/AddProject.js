@@ -100,7 +100,7 @@ export function AddProject() {
         uniqueNamespaceMutation.isSuccess && checks?.[0]?.status === 'fulfilled'
           ? checks[0].value
           : null,
-      requestUrl: `${getApiUrl()}unique-namespace`,
+      requestUrl: `${getApiUrl()}/api/unique-namespace`,
       payload: JSON.stringify({ namespace }),
     },
     {
@@ -112,7 +112,7 @@ export function AddProject() {
         uniqueGeneratedKeyMutation.isSuccess && checks?.[1]?.status === 'fulfilled'
           ? checks[1].value
           : null,
-      requestUrl: `${getApiUrl()}unique-generated-key`,
+      requestUrl: `${getApiUrl()}/api/unique-generated-key`,
       payload: JSON.stringify({ namespace }),
     },
     {
@@ -133,7 +133,7 @@ export function AddProject() {
       status: keyGenMutation.status,
       errorMessage: keyGenMutation.error?.message || 'Unknown error occurred.',
       response: keyGenMutation.isSuccess ? keyGenMutation.data : null,
-      requestUrl: `${getApiUrl()}api/v0/key/gen?arg=${namespace}&type=rsa`,
+      requestUrl: `${getApiUrl()}/api/v0/key/gen?arg=${namespace}&type=rsa`,
       kuboCli: `ipfs key gen ${namespace} --type=rsa`,
     },
   ];

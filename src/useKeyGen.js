@@ -9,7 +9,7 @@ export function useKeyGen() {
 
   return useMutation({
     mutationFn: async (keyName) => {
-      const response = await fetch(`${getApiUrl()}api/v0/key/gen?arg=${keyName}&type=rsa`, {
+      const response = await fetch(`${getApiUrl()}/api/v0/key/gen?arg=${keyName}&type=rsa`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
