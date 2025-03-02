@@ -3948,6 +3948,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"country-emoji@npm:^1.5.6":
+  version: 1.5.6
+  resolution: "country-emoji@npm:1.5.6"
+  checksum: 10/797b6e556c9b10be859e5683d8cba307ebd3718af18eef225d967f07206920002d7767b81945c16cb520cfe9c23199b0671448045e8da9ecf6d3410e6b95c610
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.3":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
@@ -4071,6 +4078,7 @@ __metadata:
     "@tanstack/react-query-devtools": "npm:^5.66.0"
     babel-loader: "npm:^9.2.1"
     bulma: "npm:^1.0.3"
+    country-emoji: "npm:^1.5.6"
     css-loader: "npm:^7.1.2"
     dotenv: "npm:^16.4.7"
     ethers: "npm:^6.13.5"

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { flag } from 'country-emoji';
 import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
 function formatVersion(version) {
@@ -22,7 +23,6 @@ const useFetchApi = () => {
 
 export function GlobalStats() {
   const { data, isPending, error } = useFetchApi();
-
   return (
     <div className="columns">
       <div className="column is-8 is-offset-2">
@@ -85,17 +85,17 @@ export function GlobalStats() {
           <table>
             <thead>
               <tr>
+                <th>&nbsp;</th>
                 <th>ID</th>
                 <th>Version</th>
-                <th>Location</th>
               </tr>
             </thead>
             <tbody>
               {data?.peers?.map((peer) => (
                 <tr key={peer.id}>
-                  <td>{peer.id}</td>
+                  <td>{flag(peer.country)}</td>
+                  <td>{peer.peerId}</td>
                   <td>{formatVersion(peer.version)}</td>
-                  <td>{peer.location}</td>
                 </tr>
               ))}
             </tbody>

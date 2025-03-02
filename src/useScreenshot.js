@@ -10,10 +10,13 @@ export function useScreenshot({ siteUrl, published }) {
     enabled: Boolean(chainId && siteUrl && published),
     queryKey: [chainId, 'useScreenshot', siteUrl, { published }],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/screenshot?url=${encodeURIComponent(siteUrl)}`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `${getApiUrl()}/api/screenshot?url=${encodeURIComponent(siteUrl)}`,
+        {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
