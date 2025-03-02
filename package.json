@@ -45,5 +45,8 @@
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
   },
+  "resolutions": {
+    "node-datachannel": "file:./stub/node-datachannel"
+  },
   "packageManager": "yarn@4.6.0"
 }
