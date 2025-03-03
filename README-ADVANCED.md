@@ -1,4 +1,7 @@
-### This guide provides step-by-step instructions to upload and publish a DApp project using the command line.
+## Overview
+This guide provides step-by-step instructions to upload and publish a DApp project using the command line.
+
+---
 
 ## Prerequisites
 
@@ -26,7 +29,7 @@ Your `NAMESPACE` must meet the following requirements:
 To ensure your namespace is unique, execute the following command in the terminal:
 
 ```bash
-curl -s -X POST "${API_URL}unique-namespace" \
+curl -s -X POST "${API_URL}/api/unique-namespace" \
 -H "Authorization: Bearer $JWT_TOKEN" \
 -H "Content-Type: application/json" \
 -d '{"namespace":"'"$NAMESPACE"'"}' | jq -r '.unique'
@@ -37,7 +40,7 @@ curl -s -X POST "${API_URL}unique-namespace" \
 To ensure your generated key is unique, execute the following command in the terminal:
 
 ```bash
-curl -s -X POST "${API_URL}unique-generated-key" \
+curl -s -X POST "${API_URL}/api/unique-generated-key" \
 -H "Authorization: Bearer $JWT_TOKEN" \
 -H "Content-Type: application/json" \
 -d '{"key":"'"$NAMESPACE"'"}' | jq -r '.unique'
@@ -58,7 +61,7 @@ cast send $CONTRACT_ADDRESS "safeMint(string)" "$NAMESPACE" \
 Generate a key pair for the namespace:
 
 ```bash
-curl -s -X POST "${API_URL}api/v0/key/gen?arg=$NAMESPACE&type=rsa" \
+curl -s -X POST "${API_URL}/api/v0/key/gen?arg=$NAMESPACE&type=rsa" \
   -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" | jq
 ```
@@ -87,7 +90,7 @@ node generateCarBlob.js
 Import the generated CAR file using the following command:
 
 ```bash
-curl -s -X POST "${API_URL}api/v0/dag/import?pin-roots=true" \
+curl -s -X POST "${API_URL}/api/v0/dag/import?pin-roots=true" \
   -H "Authorization: Bearer $JWT_TOKEN" \
   -F "file=@$(find car_files -type f -name "*.car")" | jq
 ```
@@ -99,7 +102,7 @@ Ensure the `car_files` directory contains the CAR file generated in the previous
 Fetch the DAG content:
 
 ```bash
-curl -s -X POST "${API_URL}api/v0/dag/get?arg=<PASTE_ROOT_CID_HERE>" \
+curl -s -X POST "${API_URL}/api/v0/dag/get?arg=<PASTE_ROOT_CID_HERE>" \
   -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" | jq
 ```
@@ -111,7 +114,7 @@ curl -s -X POST "${API_URL}api/v0/dag/get?arg=<PASTE_ROOT_CID_HERE>" \
 Publish the name linked to the Root CID:
 
 ```bash
-curl -s -X POST "${API_URL}api/v0/name/publish?key=<PASTE_KEY_NAME_HERE>&arg=/ipfs/<PASTE_ROOT_CID_HERE>&ttl=10s" \
+curl -s -X POST "${API_URL}/api/v0/name/publish?key=<PASTE_KEY_NAME_HERE>&arg=/ipfs/<PASTE_ROOT_CID_HERE>&ttl=10s" \
   -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" | jq
 ```
