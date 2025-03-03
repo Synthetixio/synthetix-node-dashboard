@@ -94,11 +94,15 @@ export function GlobalStats() {
             </thead>
             <tbody>
               {data?.peers?.map((peer) => (
-                <tr key={peer.id}>
+                <tr key={`${peer.peerId}-${peer.country}`}>
                   <td>{flag(peer.country)}</td>
                   <td>{peer.peerId}</td>
-                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%</td>
-                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%</td>
+                  <td className="has-text-right">
+                    {Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%
+                  </td>
+                  <td className="has-text-right">
+                    {Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%
+                  </td>
                   <td className="has-text-right">{formatVersion(peer.version)}</td>
                 </tr>
               ))}
