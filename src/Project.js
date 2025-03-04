@@ -2,7 +2,7 @@ import { CarWriter } from '@ipld/car/writer';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import CollapsibleSection from './CollapsibleSection';
-import { KeyRemovalConfirmationModal } from './KeyRemovalConfirmationModal';
+import { ConfirmationModal } from './ConfirmationModal';
 import { ProgressTracker } from './ProgressTracker';
 import { useCids } from './useCids';
 import { useDagGet } from './useDagGet';
@@ -216,12 +216,12 @@ export function Project() {
         </button>
       </div>
 
-      <KeyRemovalConfirmationModal
+      <ConfirmationModal
         isOpen={isModalOpen}
         onConfirm={handleKeyRemoval}
         onCancel={() => setIsModalOpen(false)}
         isLoading={keyRemoveMutation.isPending}
-        name={params.name}
+        text={`Remove ${params.name}?`}
       />
 
       {fileUploadError && <p className="has-text-danger">{fileUploadError}</p>}
