@@ -1,16 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useDagGet() {
-  const [synthetix] = useSynthetix();
+  const { fetch } = useFetch();
 
   return useMutation({
     mutationFn: async (rootCID) => {
-      const response = await fetch(`${getApiUrl()}/api/v0/dag/get?arg=${rootCID}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
-      });
+      const response = await fetch(`/api/v0/dag/get?arg=${rootCID}`);
       if (!response.ok) {
         throw new Error('DAG fetch failed');
       }

@@ -10,9 +10,7 @@ import { getApiUrl, saveToken } from './utils';
 const makeUnauthenticatedRequest = async (endpoint, data) => {
   const response = await fetch(`${getApiUrl()}/api/${endpoint}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
 

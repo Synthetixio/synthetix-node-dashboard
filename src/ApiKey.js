@@ -1,24 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useCheckApiToken } from './useCheckApiToken';
+import { useFetch } from './useFetch';
 import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
 
 export function ApiKey() {
   const [synthetix] = useSynthetix();
-  const { walletAddress, token, chainId, signer } = synthetix;
+  const { walletAddress, signer } = synthetix;
   const queryClient = useQueryClient();
   const checkApiTokenQuery = useCheckApiToken();
   const [apiToken, setApiToken] = useState(null);
+  const { fetch, chainId } = useFetch();
 
   const generateApiNonceMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}/api/generate-api-nonce`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch('/api/generate-api-nonce', {
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       if (!response.ok) {
@@ -35,12 +32,8 @@ export function ApiKey() {
 
   const verifyApiTokenMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}/api/verify-api-token`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch('/api/verify-api-token', {
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       if (!response.ok) {
@@ -58,10 +51,7 @@ export function ApiKey() {
 
   const regenerateApiTokenMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/regenerate-api-token`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch('/api/regenerate-api-token');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

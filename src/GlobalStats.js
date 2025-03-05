@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { flag } from 'country-emoji';
+import { useFetch } from './useFetch';
 import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
 function formatVersion(fullVersion) {
@@ -8,10 +9,15 @@ function formatVersion(fullVersion) {
 }
 
 const useFetchApi = () => {
+  const { fetch, chainId } = useFetch();
+
   return useQuery({
-    queryKey: ['apiData'],
+    enabled: Boolean(fetch),
+    queryKey: [chainId, 'useFetchApi'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/stats`);
+      const response = await fetch('/api/stats', {
+        method: 'GET',
+      });
       if (!response.ok) {
         throw new Error(`Request error: ${response.status}`);
       }
@@ -97,8 +103,12 @@ export function GlobalStats() {
                 <tr key={peer.id}>
                   <td>{flag(peer.country)}</td>
                   <td>{peer.peerId}</td>
-                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%</td>
-                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%</td>
+                  <td className="has-text-right">
+                    {Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%
+                  </td>
+                  <td className="has-text-right">
+                    {Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%
+                  </td>
                   <td className="has-text-right">{formatVersion(peer.version)}</td>
                 </tr>
               ))}

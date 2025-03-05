@@ -3,13 +3,11 @@ import { ethers } from 'ethers';
 import { useState } from 'react';
 import { WalletsList } from './WalletsList';
 import { useApproveApplicationMutation } from './useApproveApplicationMutation';
+import { useFetch } from './useFetch';
 import { usePermissions } from './usePermissions';
 import { useRejectApplicationMutation } from './useRejectApplicationMutation';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
 
 export function Admin() {
-  const [synthetix] = useSynthetix();
   const queryClient = useQueryClient();
   const permissions = usePermissions();
   const approveApplicationMutation = useApproveApplicationMutation();
@@ -18,36 +16,35 @@ export function Admin() {
   const [userApproveWalletError, setUserApproveWalletError] = useState(false);
   const [userRejectWallet, setUserRejectWallet] = useState('');
   const [userRevokeWalletError, setUserRevokeWalletError] = useState(false);
+  const { fetch, chainId } = useFetch();
 
   const submittedWallets = useQuery({
-    queryKey: [synthetix.chainId, 'submitted-wallets'],
+    queryKey: [chainId, 'submitted-wallets'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/submitted-wallets`, {
+      const response = await fetch('/api/submitted-wallets', {
         method: 'GET',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       return response.json();
     },
-    enabled: permissions.data.isAdmin === true,
+    enabled: fetch && permissions.data.isAdmin === true,
     select: (data) => data.data.wallets,
   });
 
   const approvedWallets = useQuery({
-    queryKey: [synthetix.chainId, 'approved-wallets'],
+    queryKey: [chainId, 'approved-wallets'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/approved-wallets`, {
+      const response = await fetch('/api/approved-wallets', {
         method: 'GET',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       return response.json();
     },
-    enabled: permissions.data.isAdmin === true,
+    enabled: fetch && permissions.data.isAdmin === true,
     select: (data) => data.data.wallets,
   });
 
@@ -57,8 +54,8 @@ export function Admin() {
     if (ethers.isAddress(userApproveWallet)) {
       approveApplicationMutation.mutate(userApproveWallet, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [synthetix.chainId, 'approved-wallets'] });
-          queryClient.invalidateQueries({ queryKey: [synthetix.chainId, 'submitted-wallets'] });
+          queryClient.invalidateQueries({ queryKey: [chainId, 'approved-wallets'] });
+          queryClient.invalidateQueries({ queryKey: [chainId, 'submitted-wallets'] });
         },
       });
     } else {
