@@ -189,3 +189,10 @@ code.token {
   background-color: #06061b;
   overflow-wrap: break-word;
 }
+
+.api-token-warning {
+  font-size: 18px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-weight: bold;
+}

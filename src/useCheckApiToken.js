@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl } from './utils';
 
-export function useApiToken() {
+export function useCheckApiToken() {
   const [synthetix] = useSynthetix();
   const { chainId, token } = synthetix;
 
   return useQuery({
     enabled: Boolean(chainId),
-    queryKey: [chainId, 'useApiToken'],
+    queryKey: [chainId, 'useCheckApiToken'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/api-token`, {
+      const response = await fetch(`${getApiUrl()}/api/check-api-token`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });

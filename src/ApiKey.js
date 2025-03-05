@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { ConfirmationModal } from './ConfirmationModal';
-import { useApiToken } from './useApiToken';
+import { useCheckApiToken } from './useCheckApiToken';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl } from './utils';
 
@@ -9,7 +8,8 @@ export function ApiKey() {
   const [synthetix] = useSynthetix();
   const { walletAddress, token, chainId, signer } = synthetix;
   const queryClient = useQueryClient();
-  const apiTokenQuery = useApiToken();
+  const checkApiTokenQuery = useCheckApiToken();
+  const [apiToken, setApiToken] = useState(null);
 
   const generateApiNonceMutation = useMutation({
     mutationFn: async (data) => {
@@ -49,19 +49,18 @@ export function ApiKey() {
       return response.json();
     },
     onSuccess: ({ apiToken }) => {
-      queryClient.setQueryData([chainId, 'useApiToken'], { apiToken });
+      setApiToken(apiToken);
+      queryClient.invalidateQueries({
+        queryKey: [chainId, 'useCheckApiToken'],
+      });
     },
   });
 
   const regenerateApiTokenMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async () => {
       const response = await fetch(`${getApiUrl()}/api/regenerate-api-token`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -69,24 +68,18 @@ export function ApiKey() {
       return response.json();
     },
     onSuccess: ({ apiToken }) => {
-      queryClient.setQueryData([chainId, 'useApiToken'], { apiToken });
+      setApiToken(apiToken);
     },
   });
 
   const [isCopied, setIsCopied] = useState(false);
 
-  const handleRefreshApiToken = () => {
-    setIsModalOpen(false);
-    regenerateApiTokenMutation.mutate({ apiToken: apiTokenQuery.data.apiToken });
-  };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <div>
-      {apiTokenQuery.isPending ? <p>Loading..</p> : null}
-      {apiTokenQuery.data?.apiToken ? (
+      {checkApiTokenQuery.isPending ? <p>Loading..</p> : null}
+      {apiToken ? (
         <div className="is-flex is-align-items-center">
-          <code className="token">{apiTokenQuery.data.apiToken}</code>
+          <code className="token">{apiToken}</code>
           <div style={{ marginLeft: '10px' }}>
             <button
               type="button"
@@ -94,7 +87,7 @@ export function ApiKey() {
               disabled={isCopied}
               style={{ width: '100px' }}
               onClick={() => {
-                navigator.clipboard.writeText(apiTokenQuery.data.apiToken);
+                navigator.clipboard.writeText(apiToken);
                 setIsCopied(true);
                 setTimeout(() => {
                   setIsCopied(false);
@@ -107,14 +100,23 @@ export function ApiKey() {
         </div>
       ) : null}
 
+      {checkApiTokenQuery.data?.apiTokenGenerated ? (
+        <>
+          {apiToken ? null : <p>******</p>}
+          <p className="api-token-warning">
+            Warning! If you regenerate token - old one will stop working.
+          </p>
+        </>
+      ) : null}
+
       <div className="buttons" style={{ marginTop: '10px' }}>
-        {apiTokenQuery.data?.apiToken ? (
+        {apiToken || checkApiTokenQuery.data?.apiTokenGenerated ? (
           <button
             type="button"
             className="button is-primary"
             disabled={regenerateApiTokenMutation.isPending}
             onClick={() => {
-              setIsModalOpen(true);
+              regenerateApiTokenMutation.mutate();
             }}
           >
             {regenerateApiTokenMutation.isPending ? 'Regenerating...' : 'Regenerate api token'}
@@ -135,8 +137,8 @@ export function ApiKey() {
         )}
       </div>
 
-      {apiTokenQuery.isError ? (
-        <p>An error occurred: {apiTokenQuery.error.message || 'Unknown error'}</p>
+      {checkApiTokenQuery.isError ? (
+        <p>An error occurred: {checkApiTokenQuery.error.message || 'Unknown error'}</p>
       ) : null}
 
       {generateApiNonceMutation.isError ? (
@@ -151,14 +153,6 @@ export function ApiKey() {
         <p>An error occurred: {regenerateApiTokenMutation.error.message || 'Unknown error'}</p>
       ) : null}
       {regenerateApiTokenMutation.isSuccess ? <p>API token successfully regenerated!</p> : null}
-
-      <ConfirmationModal
-        isOpen={isModalOpen}
-        onConfirm={handleRefreshApiToken}
-        onCancel={() => setIsModalOpen(false)}
-        isLoading={regenerateApiTokenMutation.isPending}
-        text="Warning! If you regenerate token - old one will stop working."
-      />
     </div>
   );
 }
