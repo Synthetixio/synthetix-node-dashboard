@@ -39,10 +39,10 @@ const Project = React.lazy(() =>
   )
 );
 
-const RefreshApiKey = React.lazy(() =>
+const ApiKey = React.lazy(() =>
   safeImport(() =>
-    import(/* webpackChunkName: "refresh-api-key" */ './RefreshApiKey').then((m) => ({
-      default: m.RefreshApiKey,
+    import(/* webpackChunkName: "api-key" */ './ApiKey').then((m) => ({
+      default: m.ApiKey,
     }))
   )
 );
@@ -130,7 +130,7 @@ function Routes() {
         return (
           <ProtectedRoute isPending={isPending} isAllowed={isUserAuthenticated} goTo={setParams}>
             <React.Suspense fallback={null}>
-              <RefreshApiKey />
+              <ApiKey />
             </React.Suspense>
           </ProtectedRoute>
         );

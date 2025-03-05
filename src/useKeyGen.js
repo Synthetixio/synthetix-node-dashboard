@@ -1,18 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useKeyGen() {
-  const [synthetix] = useSynthetix();
-  const { chainId, token } = synthetix;
+  const { fetch, chainId } = useFetch();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (keyName) => {
-      const response = await fetch(`${getApiUrl()}/api/v0/key/gen?arg=${keyName}&type=rsa`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(`/api/v0/key/gen?arg=${keyName}&type=rsa`);
       if (!response.ok) {
         throw new Error('Failed to generate a new keypair');
       }

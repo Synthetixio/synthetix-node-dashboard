@@ -1,18 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useUniqueGeneratedKey() {
-  const [synthetix] = useSynthetix();
+  const { fetch } = useFetch();
 
   return useMutation({
     mutationFn: async (key) => {
-      const response = await fetch(`${getApiUrl()}/api/unique-generated-key`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${synthetix.token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch('/api/unique-generated-key', {
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key }),
       });
       if (!response.ok) {

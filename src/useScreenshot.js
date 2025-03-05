@@ -1,22 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useScreenshot({ siteUrl, published }) {
-  const [synthetix] = useSynthetix();
-  const { chainId, token } = synthetix;
+  const { fetch, chainId } = useFetch();
 
   return useQuery({
-    enabled: Boolean(chainId && siteUrl && published),
+    enabled: Boolean(fetch && siteUrl && published),
     queryKey: [chainId, 'useScreenshot', siteUrl, { published }],
     queryFn: async () => {
-      const response = await fetch(
-        `${getApiUrl()}/api/screenshot?url=${encodeURIComponent(siteUrl)}`,
-        {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await fetch(`/api/screenshot?url=${encodeURIComponent(siteUrl)}`, {
+        method: 'GET',
+      });
 
       if (!response.ok) {
         throw new Error('Network response was not ok');

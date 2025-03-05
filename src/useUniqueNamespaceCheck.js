@@ -1,18 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useUniqueNamespaceCheck() {
-  const [synthetix] = useSynthetix();
+  const { fetch } = useFetch();
 
   return useMutation({
     mutationFn: async (namespace) => {
-      const response = await fetch(`${getApiUrl()}/api/unique-namespace`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${synthetix.token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch('/api/unique-namespace', {
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ namespace }),
       });
       if (!response.ok) {

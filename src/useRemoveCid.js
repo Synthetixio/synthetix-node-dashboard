@@ -1,18 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useRemoveCid() {
-  const [synthetix] = useSynthetix();
+  const { fetch } = useFetch();
 
   return useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`${getApiUrl()}/api/remove-cid`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${synthetix.token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch('/api/remove-cid', {
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       if (!response.ok) {

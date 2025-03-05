@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { useFetch } from './useFetch';
 
-export function useGeneratedKeys() {
+export function useCheckApiToken() {
   const { fetch, chainId } = useFetch();
 
   return useQuery({
     enabled: Boolean(fetch),
-    queryKey: [chainId, 'useGeneratedKeys'],
+    queryKey: [chainId, 'useCheckApiToken'],
     queryFn: async () => {
-      const response = await fetch('/api/generated-keys', {
+      const response = await fetch('/api/check-api-token', {
         method: 'GET',
       });
       if (!response.ok) {
@@ -16,6 +16,5 @@ export function useGeneratedKeys() {
       }
       return response.json();
     },
-    placeholderData: { keys: [] },
   });
 }

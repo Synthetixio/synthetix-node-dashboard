@@ -1,15 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
+import { useFetch } from './useFetch';
 
 export function useDagImport() {
-  const [synthetix] = useSynthetix();
+  const { fetch } = useFetch();
 
   return useMutation({
     mutationFn: async ({ formData, key }) => {
-      const response = await fetch(`${getApiUrl()}/api/v0/dag/import?pin-roots=true&key=${key}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
+      const response = await fetch(`/api/v0/dag/import?pin-roots=true&key=${key}`, {
         body: formData,
       });
       if (!response.ok) {
