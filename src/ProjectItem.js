@@ -3,7 +3,7 @@ import { makeSearch } from './useRoutes';
 import { useScreenshot } from './useScreenshot';
 
 export function ProjectItem({ name, ipfs, ipns, setParams, published }) {
-  const screenshot = useScreenshot({ siteUrl: `http://127.0.0.1:8080/ipns/${ipns}/`, published });
+  const screenshot = useScreenshot({ ipns, published });
 
   return (
     <section className="hero">
@@ -12,7 +12,9 @@ export function ProjectItem({ name, ipfs, ipns, setParams, published }) {
           <figure className="image is-16by9">
             <img
               src={
-                screenshot.data?.image || 'https://bulma.io/assets/images/placeholders/1280x960.png'
+                screenshot.data?.screenshotBase64
+                  ? `data:image/png;base64,${screenshot.data?.screenshotBase64}`
+                  : 'https://bulma.io/assets/images/placeholders/1280x960.png'
               }
               alt={name || 'Project screenshot'}
             />
