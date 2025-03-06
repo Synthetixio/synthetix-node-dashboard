@@ -16,6 +16,13 @@ import { useSynthetix } from './useSynthetix';
 import { carWriterOutToBlob, downloadCarFile, readFileAsUint8Array } from './utils';
 import { getApiUrl } from './utils';
 
+const checkIndexHtmlAbsolutePaths = async (file) => {
+  const fileContent = new TextDecoder().decode(await file.arrayBuffer());
+  const absolutePathRegex = /\b(src|href)="\/[^"]+"/g;
+  const matches = fileContent.match(absolutePathRegex);
+  return matches || [];
+};
+
 export function Project() {
   const { heliaCar, fs } = useHelia();
   const [params, setParams] = useParams();
@@ -28,15 +35,25 @@ export function Project() {
   const [currentRemovingCid, setCurrentRemovingCid] = useState(null);
   const [currentDagGetCid, setCurrentDagGetCid] = useState({ cidLoading: null, cidDag: null });
 
-  const handleFolderUpload = useCallback((e) => {
+  const handleFolderUpload = useCallback(async (e) => {
     const filesToUpload = [...e.target.files];
 
     if (filesToUpload.length === 0) {
       return;
     }
 
-    if (!filesToUpload.some((file) => file.name === 'index.html')) {
+    const indexHtmlFile = filesToUpload.find((file) => file.name === 'index.html');
+    if (!indexHtmlFile) {
       setFileUploadError('Error: The index.html file is required for upload!');
+      return;
+    }
+
+    const absolutePaths = await checkIndexHtmlAbsolutePaths(indexHtmlFile);
+    if (absolutePaths.length > 0) {
+      setFileUploadError(
+        `Error: Absolute paths found in index.html: ${absolutePaths.join(', ')}. Please fix them before uploading.`
+      );
+      e.target.value = '';
       return;
     }
 
