@@ -51,7 +51,7 @@ export function Project() {
     const absolutePaths = await checkIndexHtmlAbsolutePaths(indexHtmlFile);
     if (absolutePaths.length > 0) {
       setFileUploadError(
-        `Error: Absolute paths found in index.html: ${absolutePaths.join(', ')}. Please fix them before uploading.`
+        `Error: Absolute paths found in index.html: ${absolutePaths.join(', ')}. Please replace them with relative paths.`
       );
       e.target.value = '';
       return;
