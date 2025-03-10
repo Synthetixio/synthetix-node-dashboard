@@ -1,13 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
 
 export function useKeyRemove() {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (ipnsKey) => {
-      const response = await fetch(`/api/v0/key/rm?arg=${ipnsKey}`);
+      const response = await authorisedFetch(`/api/v0/key/rm?arg=${ipnsKey}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -15,7 +17,7 @@ export function useKeyRemove() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'useGeneratedKeys'],
+        queryKey: [synthetix.chainId, 'useGeneratedKeys'],
       });
     },
   });

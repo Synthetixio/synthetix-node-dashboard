@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 
 export function useUniqueNamespaceCheck() {
-  const { fetch } = useFetch();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useMutation({
     mutationFn: async (namespace) => {
-      const response = await fetch('/api/unique-namespace', {
+      const response = await authorisedFetch('/api/unique-namespace', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ namespace }),
       });

@@ -1,13 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
 
 export function useNamePublish() {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ keyName, rootCID }) => {
-      const response = await fetch(
+      const response = await authorisedFetch(
         `/api/v0/name/publish?key=${keyName}&arg=/ipfs/${rootCID}&ttl=10s`
       );
       if (!response.ok) {
@@ -17,7 +19,7 @@ export function useNamePublish() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'useGeneratedKeys'],
+        queryKey: [synthetix.chainId, 'useGeneratedKeys'],
       });
     },
   });

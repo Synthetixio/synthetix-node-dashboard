@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useSynthetix } from './useSynthetix';
 import { getApiUrl } from './utils';
 
-export const useFetch = () => {
+export const useAuthorisedFetch = () => {
   const [synthetix] = useSynthetix();
   const { chainId, token, logout } = synthetix;
 
@@ -10,7 +10,7 @@ export const useFetch = () => {
     (url, options = {}) => {
       const { headers, ...rest } = options;
 
-      const response = fetch(`${getApiUrl()}${url}`, {
+      return fetch(`${getApiUrl()}${url}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -25,14 +25,13 @@ export const useFetch = () => {
         }
         return response;
       });
-
-      return response;
     },
     [token, logout]
   );
 
-  return {
-    fetch: getApiUrl() === undefined || !token || !chainId ? null : authorisedFetch,
-    chainId,
-  };
+  if (!getApiUrl() || !chainId || !token || !logout) {
+    return null;
+  }
+
+  return authorisedFetch;
 };

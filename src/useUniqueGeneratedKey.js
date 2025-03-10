@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 
 export function useUniqueGeneratedKey() {
-  const { fetch } = useFetch();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useMutation({
     mutationFn: async (key) => {
-      const response = await fetch('/api/unique-generated-key', {
+      const response = await authorisedFetch('/api/unique-generated-key', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key }),
       });

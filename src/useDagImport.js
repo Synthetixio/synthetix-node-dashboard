@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 
 export function useDagImport() {
-  const { fetch } = useFetch();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useMutation({
     mutationFn: async ({ formData, key }) => {
-      const response = await fetch(`/api/v0/dag/import?pin-roots=true&key=${key}`, {
+      const response = await authorisedFetch(`/api/v0/dag/import?pin-roots=true&key=${key}`, {
         body: formData,
       });
       if (!response.ok) {

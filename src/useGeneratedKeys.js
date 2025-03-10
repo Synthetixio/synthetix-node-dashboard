@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
 
 export function useGeneratedKeys() {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useQuery({
-    enabled: Boolean(fetch),
-    queryKey: [chainId, 'useGeneratedKeys'],
+    enabled: Boolean(synthetix.chainId && authorisedFetch),
+    queryKey: [synthetix.chainId, 'useGeneratedKeys'],
     queryFn: async () => {
-      const response = await fetch('/api/generated-keys', {
+      const response = await authorisedFetch('/api/generated-keys', {
         method: 'GET',
       });
       if (!response.ok) {

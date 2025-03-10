@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
 
 export function useScreenshot({ siteUrl, published }) {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useQuery({
-    enabled: Boolean(fetch && siteUrl && published),
-    queryKey: [chainId, 'useScreenshot', siteUrl, { published }],
+    enabled: Boolean(synthetix.chainId && authorisedFetch && siteUrl && published),
+    queryKey: [synthetix.chainId, 'useScreenshot', siteUrl, { published }],
     queryFn: async () => {
-      const response = await fetch(`/api/screenshot?url=${encodeURIComponent(siteUrl)}`, {
+      const response = await authorisedFetch(`/api/screenshot?url=${encodeURIComponent(siteUrl)}`, {
         method: 'GET',
       });
 

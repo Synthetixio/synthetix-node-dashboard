@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
 
 export function useCheckApiToken() {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useQuery({
-    enabled: Boolean(fetch),
-    queryKey: [chainId, 'useCheckApiToken'],
+    enabled: Boolean(synthetix.chainId && authorisedFetch),
+    queryKey: [synthetix.chainId, 'useCheckApiToken'],
     queryFn: async () => {
-      const response = await fetch('/api/check-api-token', {
+      const response = await authorisedFetch('/api/check-api-token', {
         method: 'GET',
       });
       if (!response.ok) {

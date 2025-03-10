@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 import { useParams } from './useRoutes';
+import { useSynthetix } from './useSynthetix';
 
 export function useCids() {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
   const [params] = useParams();
 
   return useQuery({
-    enabled: Boolean(fetch && params.name),
-    queryKey: [chainId, 'useCids', params.name],
+    enabled: Boolean(synthetix.chainId && authorisedFetch && params.name),
+    queryKey: [synthetix.chainId, 'useCids', params.name],
     queryFn: async () => {
-      const response = await fetch(`/api/cids?key=${params.name}`, {
+      const response = await authorisedFetch(`/api/cids?key=${params.name}`, {
         method: 'GET',
       });
       if (!response.ok) {

@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 
 export function useRemoveCid() {
-  const { fetch } = useFetch();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useMutation({
     mutationFn: async (data) => {
-      const response = await fetch('/api/remove-cid', {
+      const response = await authorisedFetch('/api/remove-cid', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });

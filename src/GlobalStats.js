@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { flag } from 'country-emoji';
-import { useFetch } from './useFetch';
-import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
+import { humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
 function formatVersion(fullVersion) {
   const [version] = fullVersion.split('+');
@@ -9,13 +10,14 @@ function formatVersion(fullVersion) {
 }
 
 const useFetchApi = () => {
-  const { fetch, chainId } = useFetch();
+  const [synthetix] = useSynthetix();
+  const authorisedFetch = useAuthorisedFetch();
 
   return useQuery({
-    enabled: Boolean(fetch),
-    queryKey: [chainId, 'useFetchApi'],
+    enabled: Boolean(synthetix.chainId && authorisedFetch),
+    queryKey: [synthetix.chainId, 'useFetchApi'],
     queryFn: async () => {
-      const response = await fetch('/api/stats', {
+      const response = await authorisedFetch('/api/stats', {
         method: 'GET',
       });
       if (!response.ok) {

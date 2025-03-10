@@ -3,12 +3,14 @@ import { ethers } from 'ethers';
 import { useState } from 'react';
 import { WalletsList } from './WalletsList';
 import { useApproveApplicationMutation } from './useApproveApplicationMutation';
-import { useFetch } from './useFetch';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 import { usePermissions } from './usePermissions';
 import { useRejectApplicationMutation } from './useRejectApplicationMutation';
+import { useSynthetix } from './useSynthetix';
 
 export function Admin() {
   const queryClient = useQueryClient();
+  const [synthetix] = useSynthetix();
   const permissions = usePermissions();
   const approveApplicationMutation = useApproveApplicationMutation();
   const rejectApplicationMutation = useRejectApplicationMutation();
@@ -16,12 +18,13 @@ export function Admin() {
   const [userApproveWalletError, setUserApproveWalletError] = useState(false);
   const [userRejectWallet, setUserRejectWallet] = useState('');
   const [userRevokeWalletError, setUserRevokeWalletError] = useState(false);
-  const { fetch, chainId } = useFetch();
+  const authorisedFetch = useAuthorisedFetch();
 
   const submittedWallets = useQuery({
-    queryKey: [chainId, 'submitted-wallets'],
+    enabled: Boolean(synthetix.chainId && authorisedFetch && permissions.data.isAdmin === true),
+    queryKey: [synthetix.chainId, 'submitted-wallets'],
     queryFn: async () => {
-      const response = await fetch('/api/submitted-wallets', {
+      const response = await authorisedFetch('/api/submitted-wallets', {
         method: 'GET',
       });
       if (!response.ok) {
@@ -29,14 +32,14 @@ export function Admin() {
       }
       return response.json();
     },
-    enabled: fetch && permissions.data.isAdmin === true,
     select: (data) => data.data.wallets,
   });
 
   const approvedWallets = useQuery({
-    queryKey: [chainId, 'approved-wallets'],
+    enabled: Boolean(synthetix.chainId && authorisedFetch && permissions.data.isAdmin === true),
+    queryKey: [synthetix.chainId, 'approved-wallets'],
     queryFn: async () => {
-      const response = await fetch('/api/approved-wallets', {
+      const response = await authorisedFetch('/api/approved-wallets', {
         method: 'GET',
       });
       if (!response.ok) {
@@ -44,7 +47,6 @@ export function Admin() {
       }
       return response.json();
     },
-    enabled: fetch && permissions.data.isAdmin === true,
     select: (data) => data.data.wallets,
   });
 
@@ -54,8 +56,8 @@ export function Admin() {
     if (ethers.isAddress(userApproveWallet)) {
       approveApplicationMutation.mutate(userApproveWallet, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [chainId, 'approved-wallets'] });
-          queryClient.invalidateQueries({ queryKey: [chainId, 'submitted-wallets'] });
+          queryClient.invalidateQueries({ queryKey: [synthetix.chainId, 'approved-wallets'] });
+          queryClient.invalidateQueries({ queryKey: [synthetix.chainId, 'submitted-wallets'] });
         },
       });
     } else {

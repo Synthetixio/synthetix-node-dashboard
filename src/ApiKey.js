@@ -1,20 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 import { useCheckApiToken } from './useCheckApiToken';
-import { useFetch } from './useFetch';
 import { useSynthetix } from './useSynthetix';
 
 export function ApiKey() {
   const [synthetix] = useSynthetix();
-  const { walletAddress, signer } = synthetix;
+  const { walletAddress, chainId, signer } = synthetix;
   const queryClient = useQueryClient();
   const checkApiTokenQuery = useCheckApiToken();
   const [apiToken, setApiToken] = useState(null);
-  const { fetch, chainId } = useFetch();
+  const authorisedFetch = useAuthorisedFetch();
 
   const generateApiNonceMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch('/api/generate-api-nonce', {
+      const response = await authorisedFetch('/api/generate-api-nonce', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
@@ -32,7 +32,7 @@ export function ApiKey() {
 
   const verifyApiTokenMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch('/api/verify-api-token', {
+      const response = await authorisedFetch('/api/verify-api-token', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
@@ -51,7 +51,7 @@ export function ApiKey() {
 
   const regenerateApiTokenMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/regenerate-api-token');
+      const response = await authorisedFetch('/api/regenerate-api-token');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
