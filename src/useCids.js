@@ -5,11 +5,11 @@ import { useSynthetix } from './useSynthetix';
 
 export function useCids() {
   const [synthetix] = useSynthetix();
-  const authorisedFetch = useAuthorisedFetch();
+  const { isLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
   const [params] = useParams();
 
   return useQuery({
-    enabled: Boolean(synthetix.chainId && authorisedFetch && params.name),
+    enabled: Boolean(synthetix.chainId && !isLoading && !isError && authorisedFetch && params.name),
     queryKey: [synthetix.chainId, 'useCids', params.name],
     queryFn: async () => {
       const response = await authorisedFetch(`/api/cids?key=${params.name}`, {

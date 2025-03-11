@@ -4,10 +4,10 @@ import { useSynthetix } from './useSynthetix';
 
 export function useGeneratedKeys() {
   const [synthetix] = useSynthetix();
-  const authorisedFetch = useAuthorisedFetch();
+  const { isLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
 
   return useQuery({
-    enabled: Boolean(synthetix.chainId && authorisedFetch),
+    enabled: Boolean(synthetix.chainId && !isLoading && !isError && authorisedFetch),
     queryKey: [synthetix.chainId, 'useGeneratedKeys'],
     queryFn: async () => {
       const response = await authorisedFetch('/api/generated-keys', {

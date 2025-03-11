@@ -10,10 +10,13 @@ export function ApiKey() {
   const queryClient = useQueryClient();
   const checkApiTokenQuery = useCheckApiToken();
   const [apiToken, setApiToken] = useState(null);
-  const authorisedFetch = useAuthorisedFetch();
+  const { isLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
 
   const generateApiNonceMutation = useMutation({
     mutationFn: async (data) => {
+      if (!synthetix.chainId || isLoading || isError || !authorisedFetch) {
+        throw 'Failed';
+      }
       const response = await authorisedFetch('/api/generate-api-nonce', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -32,6 +35,9 @@ export function ApiKey() {
 
   const verifyApiTokenMutation = useMutation({
     mutationFn: async (data) => {
+      if (!synthetix.chainId || isLoading || isError || !authorisedFetch) {
+        throw 'Failed';
+      }
       const response = await authorisedFetch('/api/verify-api-token', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -51,6 +57,9 @@ export function ApiKey() {
 
   const regenerateApiTokenMutation = useMutation({
     mutationFn: async () => {
+      if (!synthetix.chainId || isLoading || isError || !authorisedFetch) {
+        throw 'Failed';
+      }
       const response = await authorisedFetch('/api/regenerate-api-token');
       if (!response.ok) {
         throw new Error('Network response was not ok');

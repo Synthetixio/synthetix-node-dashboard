@@ -18,10 +18,16 @@ export function Admin() {
   const [userApproveWalletError, setUserApproveWalletError] = useState(false);
   const [userRejectWallet, setUserRejectWallet] = useState('');
   const [userRevokeWalletError, setUserRevokeWalletError] = useState(false);
-  const authorisedFetch = useAuthorisedFetch();
+  const { isLoading: fetchLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
 
   const submittedWallets = useQuery({
-    enabled: Boolean(synthetix.chainId && authorisedFetch && permissions.data.isAdmin === true),
+    enabled: Boolean(
+      synthetix.chainId &&
+        !fetchLoading &&
+        !isError &&
+        authorisedFetch &&
+        permissions.data.isAdmin === true
+    ),
     queryKey: [synthetix.chainId, 'submitted-wallets'],
     queryFn: async () => {
       const response = await authorisedFetch('/api/submitted-wallets', {
@@ -36,7 +42,13 @@ export function Admin() {
   });
 
   const approvedWallets = useQuery({
-    enabled: Boolean(synthetix.chainId && authorisedFetch && permissions.data.isAdmin === true),
+    enabled: Boolean(
+      synthetix.chainId &&
+        !fetchLoading &&
+        !isError &&
+        authorisedFetch &&
+        permissions.data.isAdmin === true
+    ),
     queryKey: [synthetix.chainId, 'approved-wallets'],
     queryFn: async () => {
       const response = await authorisedFetch('/api/approved-wallets', {
