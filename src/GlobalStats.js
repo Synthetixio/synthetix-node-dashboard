@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { flag } from 'country-emoji';
-import { getApiUrl, humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
+import { useSynthetix } from './useSynthetix';
+import { humanReadableDuration, humanReadableNumber, humanReadableSize } from './utils';
 
 function formatVersion(fullVersion) {
   const [version] = fullVersion.split('+');
@@ -8,10 +10,16 @@ function formatVersion(fullVersion) {
 }
 
 const useFetchApi = () => {
+  const [synthetix] = useSynthetix();
+  const { isLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
+
   return useQuery({
-    queryKey: ['apiData'],
+    enabled: Boolean(synthetix.chainId && !isLoading && !isError && authorisedFetch),
+    queryKey: [synthetix.chainId, 'useFetchApi'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/stats`);
+      const response = await authorisedFetch('/api/stats', {
+        method: 'GET',
+      });
       if (!response.ok) {
         throw new Error(`Request error: ${response.status}`);
       }
@@ -97,8 +105,12 @@ export function GlobalStats() {
                 <tr key={peer.id}>
                   <td>{flag(peer.country)}</td>
                   <td>{peer.peerId}</td>
-                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%</td>
-                  <td className="has-text-right">{Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%</td>
+                  <td className="has-text-right">
+                    {Math.floor(data?.peerUptime?.[peer.peerId]?.daily * 100)}%
+                  </td>
+                  <td className="has-text-right">
+                    {Math.floor(data?.peerUptime?.[peer.peerId]?.monthly * 100)}%
+                  </td>
                   <td className="has-text-right">{formatVersion(peer.version)}</td>
                 </tr>
               ))}

@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
 
 export function useGeneratedKeys() {
   const [synthetix] = useSynthetix();
-  const { chainId, token } = synthetix;
+  const { isLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
 
   return useQuery({
-    enabled: Boolean(chainId),
-    queryKey: [chainId, 'useGeneratedKeys'],
+    enabled: Boolean(synthetix.chainId && !isLoading && !isError && authorisedFetch),
+    queryKey: [synthetix.chainId, 'useGeneratedKeys'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/generated-keys`, {
+      const response = await authorisedFetch('/api/generated-keys', {
         method: 'GET',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');

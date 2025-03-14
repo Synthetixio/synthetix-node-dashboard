@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function KeyRemovalConfirmationModal({ isOpen, onConfirm, onCancel, isLoading, name }) {
+export function ConfirmationModal({ isOpen, onConfirm, onCancel, isLoading, text }) {
   if (!isOpen) return null;
 
   return (
@@ -8,7 +8,7 @@ export function KeyRemovalConfirmationModal({ isOpen, onConfirm, onCancel, isLoa
       <div className="modal-background" />
       <div className="modal-card">
         <section className="modal-card-body">
-          <p>{`Remove ${name}?`}</p>
+          <p>{text}</p>
         </section>
         <footer className="modal-card-foot">
           <div className="buttons">

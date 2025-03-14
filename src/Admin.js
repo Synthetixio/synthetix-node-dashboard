@@ -3,14 +3,14 @@ import { ethers } from 'ethers';
 import { useState } from 'react';
 import { WalletsList } from './WalletsList';
 import { useApproveApplicationMutation } from './useApproveApplicationMutation';
+import { useAuthorisedFetch } from './useAuthorisedFetch';
 import { usePermissions } from './usePermissions';
 import { useRejectApplicationMutation } from './useRejectApplicationMutation';
 import { useSynthetix } from './useSynthetix';
-import { getApiUrl } from './utils';
 
 export function Admin() {
-  const [synthetix] = useSynthetix();
   const queryClient = useQueryClient();
+  const [synthetix] = useSynthetix();
   const permissions = usePermissions();
   const approveApplicationMutation = useApproveApplicationMutation();
   const rejectApplicationMutation = useRejectApplicationMutation();
@@ -18,36 +18,47 @@ export function Admin() {
   const [userApproveWalletError, setUserApproveWalletError] = useState(false);
   const [userRejectWallet, setUserRejectWallet] = useState('');
   const [userRevokeWalletError, setUserRevokeWalletError] = useState(false);
+  const { isLoading: fetchLoading, isError, data: authorisedFetch } = useAuthorisedFetch();
 
   const submittedWallets = useQuery({
+    enabled: Boolean(
+      synthetix.chainId &&
+        !fetchLoading &&
+        !isError &&
+        authorisedFetch &&
+        permissions.data.isAdmin === true
+    ),
     queryKey: [synthetix.chainId, 'submitted-wallets'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/submitted-wallets`, {
+      const response = await authorisedFetch('/api/submitted-wallets', {
         method: 'GET',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       return response.json();
     },
-    enabled: permissions.data.isAdmin === true,
     select: (data) => data.data.wallets,
   });
 
   const approvedWallets = useQuery({
+    enabled: Boolean(
+      synthetix.chainId &&
+        !fetchLoading &&
+        !isError &&
+        authorisedFetch &&
+        permissions.data.isAdmin === true
+    ),
     queryKey: [synthetix.chainId, 'approved-wallets'],
     queryFn: async () => {
-      const response = await fetch(`${getApiUrl()}/api/approved-wallets`, {
+      const response = await authorisedFetch('/api/approved-wallets', {
         method: 'GET',
-        headers: { Authorization: `Bearer ${synthetix.token}` },
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       return response.json();
     },
-    enabled: permissions.data.isAdmin === true,
     select: (data) => data.data.wallets,
   });
 

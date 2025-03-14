@@ -2,7 +2,7 @@ import { CarWriter } from '@ipld/car/writer';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import CollapsibleSection from './CollapsibleSection';
-import { KeyRemovalConfirmationModal } from './KeyRemovalConfirmationModal';
+import { ConfirmationModal } from './ConfirmationModal';
 import { ProgressTracker } from './ProgressTracker';
 import { useCids } from './useCids';
 import { useDagGet } from './useDagGet';
@@ -10,6 +10,7 @@ import { useDagImport } from './useDagImport';
 import { useHelia } from './useHelia';
 import { useKeyRemove } from './useKeyRemove';
 import { useNamePublish } from './useNamePublish';
+import { usePinAdd } from './usePinAdd';
 import { useRemoveCid } from './useRemoveCid';
 import { useParams } from './useRoutes';
 import { useSynthetix } from './useSynthetix';
@@ -47,6 +48,7 @@ export function Project() {
   }, []);
 
   const dagImportMutation = useDagImport();
+  const pinAddMutation = usePinAdd();
   const dagGetMutation = useDagGet();
   const dagGetCidListMutation = useDagGet();
   const namePublishMutation = useNamePublish();
@@ -103,10 +105,19 @@ export function Project() {
       dagImportMutation.mutate(
         { formData, key: params.name },
         {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: [synthetix.chainId, 'useCids', params.name],
-            });
+          onSuccess: (data) => {
+            if (data.Root?.Cid['/'] && params.name) {
+              pinAddMutation.mutate(
+                { cid: data.Root?.Cid['/'], key: params.name },
+                {
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({
+                      queryKey: [synthetix.chainId, 'useCids', params.name],
+                    });
+                  },
+                }
+              );
+            }
           },
         }
       );
@@ -116,6 +127,7 @@ export function Project() {
     carBlob,
     params.name,
     dagImportMutation.mutate,
+    pinAddMutation.mutate,
     queryClient.invalidateQueries,
     synthetix.chainId,
   ]);
@@ -148,6 +160,15 @@ export function Project() {
       response: dagImportMutation.isSuccess ? dagImportMutation.data : null,
       requestUrl: `${getApiUrl()}/api/v0/dag/import?pin-roots=true`,
       kuboCli: 'ipfs dag import --pin-roots=true <path_to_car_file>',
+    },
+    {
+      id: 'pin_add',
+      text: 'Pinning DAG to protect from garbage collection.',
+      status: pinAddMutation.status,
+      errorMessage: pinAddMutation.error?.message || 'Unknown error occurred.',
+      response: pinAddMutation.isSuccess ? pinAddMutation.data : null,
+      requestUrl: `${getApiUrl()}/api/v0/pin/add?arg=${rootCID}&customKey=${params.name}`,
+      kuboCli: `ipfs pin add ${rootCID}`,
     },
     {
       id: 'name_publish',
@@ -216,19 +237,43 @@ export function Project() {
         </button>
       </div>
 
-      <KeyRemovalConfirmationModal
+      <ConfirmationModal
         isOpen={isModalOpen}
         onConfirm={handleKeyRemoval}
         onCancel={() => setIsModalOpen(false)}
         isLoading={keyRemoveMutation.isPending}
-        name={params.name}
+        text={`Remove ${params.name}?`}
       />
 
       {fileUploadError && <p className="has-text-danger">{fileUploadError}</p>}
 
+      {pinAddMutation.isError ? (
+        <button
+          type="button"
+          className={`button is-primary ${pinAddMutation.isPending ? 'is-loading' : ''}`}
+          disabled={!rootCID || !params.name}
+          onClick={() => {
+            if (rootCID && params.name) {
+              pinAddMutation.mutate(
+                { cid: rootCID.toString(), key: params.name },
+                {
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({
+                      queryKey: [synthetix.chainId, 'useCids', params.name],
+                    });
+                  },
+                }
+              );
+            }
+          }}
+        >
+          Retry Pin for {rootCID?.toString()}
+        </button>
+      ) : null}
+
       {rootCID == null || files.length === 0 ? null : (
         <>
-          {dagImportMutation.data?.Root.Cid['/'] ? (
+          {dagImportMutation.data?.Root.Cid['/'] && pinAddMutation.isSuccess ? (
             <div className="my-4">
               <div className="mb-4">
                 <p>
