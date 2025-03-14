@@ -132,3 +132,6 @@ dist
 !.yarn/versions
 
 .idea
+
+# macOS
+*.DS_Store
